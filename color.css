@@ -1,0 +1,12 @@
+:root {
+    /* رنگ‌های تم روشن (Light Theme) */
+    --color-bg: #0066ff;
+    --color-card-bg: rgba(255, 255, 255, 0.8);
+    --color-hover-bg: rgba(59, 130, 246, 0.1);
+    --color-hover-row: rgba(59, 130, 246, 0.05);
+    --color-even-row: rgba(249, 250, 251, 0.8);
+    --color-shadow: #0000000d;
+    --color-input-focus: rgba(59, 130, 246, 0.2);
+    --color-text: #374151;
+}
+

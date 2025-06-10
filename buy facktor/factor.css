@@ -1,0 +1,101 @@
+
+body{
+    background-color: #a7afb6;
+}
+
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+.facktor-container{
+    width: 800px;
+    height: 100px;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto;
+    border-radius: 10px;
+}
+.facktor-container form{
+    direction: rtl;
+}
+
+.facktor-container input{
+    width: auto;
+    height: 30px;
+    border: 1px solid #878787;
+    border-radius: 5px;
+    padding: 2px 10px 2px 2px;
+    direction: rtl;
+    font-family: morabba;
+}
+.facktor-container input[type=submit]{
+    background-color: #64a758;
+    color: #fff;
+    width: auto;
+    cursor: pointer;
+    height: 32px;
+    padding:5px;
+    text-align: center;
+}
+
+
+.show{
+    width: 780px;
+    margin: 10px auto;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+        
+}
+.show table{
+    direction: rtl;
+   
+
+}
+
+.show table th,td{
+    
+    font-family: morabba;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.show table td button{
+    background-color: #ff0000;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+}
+
+#success-msg{
+    position: absolute;
+    top: 0px;
+    left: 20%;
+    right: 20%;
+    margin: 0px auto;
+    background-color: #64a758;
+    width: 800px;
+    height: 30px;
+    text-align: center;
+    align-items: center;
+    color: #fff; 
+    padding-top: 10px;   
+    font-family: morabba;
+}
+

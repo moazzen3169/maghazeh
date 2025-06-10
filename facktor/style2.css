@@ -1,0 +1,162 @@
+/* استایل جدول */
+
+
+.container , #form-container {
+    width: 700px;
+    margin: 10px auto;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #ffffff;
+}
+.bottomfactor table{
+    direction: ltr;
+    width: 300px;
+}
+.bottomfactor table td , tr{
+    text-align: center;
+}
+#form-container input{
+    width: 90%;
+
+}
+
+
+
+#btnsave{
+    width: 100%;
+}
+
+form{
+    display: flex;
+    font-family: morabba;
+    direction: rtl;
+
+}   
+
+
+table {
+    font-family: morabba;
+    width: 100%;
+    margin: 0%;
+    border-collapse: collapse;
+    direction: rtl;
+}
+table td button{
+    width: 70px;
+    margin: 1px;
+    padding:10px;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px 1px;
+    text-align: center;
+}
+
+table th {
+    background-color: #f2f2f2;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+
+/* استایل ورودی‌ها */
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 2px;
+    box-sizing: border-box;
+    border: 1px solid #333;
+    border-radius: 4px;
+    font-family: morabba;
+
+}
+
+/* استایل دکمه‌ها */
+button {
+    background-color: #87bdde;
+    color: #ffffff;
+    padding: 10px 20px;
+    margin: 5px 0;
+    border: 1px solid #333;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-family: morabba;
+
+}
+
+
+
+#display-table th{
+
+    padding: 10px ;
+    width: 100px;
+}
+
+.bottomfactor{
+    direction: ltr;
+    width: 270px;
+    margin: 10px 0px;
+    
+}
+.bottomfactor input{
+    width: 90%;
+    height: auto;
+    padding: auto;
+    margin: 1px;
+}
+
+.bottomfactor td, th{
+    text-align: left;
+}
+
+#tbl2{
+    background-color: #000;
+    color: #ddd;
+    width:70px;
+    margin:  0px;
+}
+
+#tbl{
+    background-color: #000;
+    color: #ddd;
+    width:70px;
+    margin:  0px;
+}
+
+
+
+form button{
+    background-color: #b65f28;
+    color: #ddd;
+}
+#addbtn{
+    background-color: #000;
+    color: #fff;;
+}
+
+#description-input{
+    font-family: morabba;
+    direction: rtl;
+}
+
+#description-output {
+    font-family: morabba;
+    direction: rtl;
+    width: 96%;
+    margin-left: 0px;
+    margin-right: 50px;
+    border: 1px solid #333;
+    padding: 3px 10px;
+    text-align: right;
+    margin: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* تعداد خطوط مورد نظر */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+

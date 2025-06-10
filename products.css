@@ -1,0 +1,161 @@
+
+.container {
+    font-family: morabba;
+    display: flex;
+    flex-direction: column; /* ترتیب عمودی برای کل کانتینر */
+    align-items: center; /* مرکز قرار دادن محتوا */
+    padding: 20px;
+}
+
+.sectiens {
+    display: flex; /* ترتیب افقی برای دیوها */
+    justify-content: space-between; /* فاصله بین دیوها */
+    width: 1000px; /* عرض کامل */
+    margin-bottom: 20px; /* فاصله زیر دیوهای section */
+}
+
+.section1, .section2, .mosts-table {
+    width: 320px;
+    height: 100px;
+    background-color: #95545c; /* رنگ پس‌زمینه دیوها */
+    color: white; /* رنگ متن */
+    padding: 20px;
+    border-radius: 8px; /* گوشه‌های گرد */
+    flex: 1; /* دیوها به صورت مساوی عرض بگیرند */
+    margin: 0 10px; /* فاصله بین دیوها */
+}
+
+.form {
+    width: 605px; /* عرض کامل برای فرم */
+    height: 185px;
+    background-color: #332b2c; /* رنگ پس‌زمینه فرم */
+    padding: 20px;
+    border-radius: 8px; /* گوشه‌های گرد */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* سایه نرم */
+    margin-left: 340px;
+    margin-top: -245px;
+}
+
+.form select{
+    font-family: morabba;
+    text-align: center;
+    width: 199px;
+    height: 43px;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    
+}
+
+.form input{
+    font-family: morabba;
+    text-align: center;
+    width: 296px;
+    height: 43px;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 10px;
+    
+}
+
+input[type="submit"] {
+    font-family: morabba;
+    text-align: center;
+    width: 605px;
+    height: 43px;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+
+
+
+
+
+.mosts-table {
+    height: 350px;
+}
+
+
+.products-table{
+    width: 980px;
+    min-height: 100px;
+    height: auto;
+    background-color: #332b2c;
+    border-radius: 8px; /* گوشه‌های گرد */
+    margin: 20px;
+}
+table {
+    
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    color: #ffffff;
+    font-family: morabba;
+    border-bottom: 1px solid #ddd;
+}
+.delete-link{
+    text-decoration: none;
+    color: red;
+}
+
+
+
+.namayesh table {
+    
+    width: 70%;
+    border-collapse: collapse;
+    
+}
+
+.namayesh th, td {
+    padding: 10px;
+    text-align: center;
+    color: #ff0000;
+    font-family: morabba;
+    border-bottom: 1px solid #ddd;
+}
+.namayesh .delete-link{
+    text-decoration: none;
+    color: red;
+}
+
+
+
+.search #search{
+   width: 850px;
+   height: 40px;
+   margin-top: 20px;
+   margin-left: 20px;
+   border: none;
+   border-radius: 5px;
+   padding-left: 20px;
+   font-family: morabba;
+   background-color: #332b2c78;
+   color: #ddd;
+}
+
+.search #searchbtn{
+   background-color: #332b2c;
+   color: #ddd;
+    width: 100px;
+    height: 42px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+
+
+
+
+

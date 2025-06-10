@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiple Vertical Sliders Side by Side</title>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+<style>
+  .swiper-container {
+    width: 33.33%;
+    height: 50vh;
+  }
+
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #7e7e7e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .swiper-wrapper {
+    display: flex;
+  }
+</style>
+</head>
+<body>
+<div class="swiper-container">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide 1</div>
+    <div class="swiper-slide">Slide 2</div>
+    <div class="swiper-slide">Slide 3</div>
+  </div>
+</div>
+
+<div class="swiper-container">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Slide A</div>
+    <div class="swiper-slide">Slide B</div>
+    <div class="swiper-slide">Slide C</div>
+  </div>
+</div>
+
+<div class="swiper-container">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">Content X</div>
+    <div class="swiper-slide">Content Y</div>
+    <div class="swiper-slide">Content Z</div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+  var swiper1 = new Swiper('.swiper-container:nth-of-type(1)', {
+    direction: 'vertical',
+    loop: true,
+    autoplay: {
+      delay: 3000,
+    },
+  });
+
+  var swiper2 = new Swiper('.swiper-container:nth-of-type(2)', {
+    direction: 'vertical',
+    loop: true,
+    autoplay: {
+      delay: 3000,
+    },
+  });
+
+  var swiper3 = new Swiper('.swiper-container:nth-of-type(3)', {
+    direction: 'vertical',
+    loop: true,
+    autoplay: {
+      delay: 3000,
+    },
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جزئیات فاکتور</title>
+<link rel="stylesheet" href="style2.css">
+
+</head>
+<body>
+
+
+
+    <div id="form-container">
+
+        <form id="data-form" onsubmit="submitForm(event)">
+            <table>
+
+                <tr>
+                    <td><input type="text" name="num-factor" placeholder="شماره فاکتور"></td>
+                    <td><input type="text" name="date-factor" placeholder="تاریخ فاکتور"></td>
+                    <td><input type="text" name="made-date" placeholder="تاریخ صدور"></td>
+                    <td><input type="text" name="seller-name" placeholder="نام فروشنده"></td>
+                    <td><input type="text" name="buyer-name" placeholder="نام خریدار"></td>
+                    <td><input type="text" name="buyer-address" placeholder="آدرس خریدار"></td>
+
+                    
+                </tr>
+            </table>
+        </form>
+            <button id="btnsave" type="button" onclick="saveData()">ذخیره</button>
+        
+    </div>
+   
+   
+
+
+
+
+    <div class="container">
+
+        <form id="product-form">
+            <input type="text" id="product-name" placeholder="نام محصول">
+            <input type="number" id="product-quantity" placeholder="تعداد محصول" oninput="calculateTotalPrice()">
+            <input type="text" id="product-price" placeholder="قیمت فی" oninput="formatPrice(this)">
+            <input type="text" id="total-price" placeholder="مجموع قیمت" readonly>
+            <button type="button" onclick="addRow()">افزودن</button>
+        </form>
+
+        <h2 style="font-family: morabba; text-align: center; margin-top: 0px;">گالری هادی</h2>
+
+        
+        <button type="button" id="toggle-form-button" onclick="toggleFormVisibility()">مخفی </button>
+        
+
+
+        <script>
+        var formVisible = true;
+        var form = document.getElementById("product-form");
+        var toggleButton = document.getElementById("toggle-form-button");
+        
+        function toggleFormVisibility() {
+            if (formVisible) {
+                form.style.display = "none";
+                toggleButton.textContent = "فاکتور فروش";
+            } else {
+                form.style.display = "block";
+                toggleButton.textContent = "مخفی کردن فرم";
+            }
+            formVisible = !formVisible;
+        }
+        </script>
+  
+
+<div class="tbl1">
+        <table id="display-table"></table>
+
+        <script>
+
+
+
+
+            function saveData() {
+                var form = document.getElementById("data-form");
+                var formData = new FormData(form);
+        
+                var displayTable = document.getElementById("display-table");
+                displayTable.innerHTML = "<tr><th>شماره فاکتور</th><th>تاریخ فاکتور</th><th>تاریخ صدور</th><th>نام فروشنده</th><th>نام خریدار</th><th>آدرس خریدار</th></tr>";
+        
+                var rowData = "";
+        
+                for (var pair of formData.entries()) {
+                    rowData += `<td>${pair[1]}</td>`;
+                }
+        
+                // Displaying all data in a single row
+                displayTable.innerHTML += `<tr>${rowData}</tr>`;
+        
+                document.getElementById("form-container").style.display = "none";
+                document.getElementById("display-table").style.display = "block";
+            }
+
+
+            
+        </script>
+</div>
+<br>
+
+
+        <table id="products-table">
+            <tr>
+                <th>ردیف</th>
+                <th>نام محصول</th>
+                <th>تعداد</th>
+                <th>قیمت فی</th>
+                <th>مجموع قیمت</th>
+               
+            </tr>
+        </table>
+
+
+
+
+
+
+
+        
+
+        <div class="bottomfactor">
+            <table>
+                <tr>
+                    <th>عنوان</th>
+                    <th>مقدار</th>
+                </tr>
+                <tr>
+                    <td>تعداد کل محصول</td>
+                    <td><div id="total"></div></div></td>
+                </tr>
+                <tr>
+                    <td>مرجوعی</td>
+                    <td>
+                        <div id="total-returns">
+                            <input type="number" name="returns" id="returns">
+                            <div id="result" style="display: none;"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>مبلغ کل محصولات</td>
+                    <td><div id="total-amount"></div></td>
+                </tr>
+                <tr>
+                    <td>محاسبه شده:</td>
+                    <td id="total-new"></td>
+                </tr>
+            </table>
+            
+            <script>
+                var inputElement = document.getElementById('returns');
+                var resultElement = document.getElementById('result');
+                var totalAmountElement = document.getElementById('total-amount');
+                var totalNewElement = document.getElementById('total-new');
+            
+                inputElement.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+            
+                        var inputValue = parseInt(inputElement.value);
+            
+                        if (inputValue === 0) {
+                            resultElement.textContent = 'ورودی نمی‌تواند صفر باشد';
+                            return;
+                        }
+            
+                        inputElement.style.display = 'none';
+            
+                        // نمایش مقدار وارد شده
+                        resultElement.textContent = inputValue.toLocaleString('en');
+                        resultElement.style.display = 'block';
+            
+                        var totalAmount = parseInt(totalAmountElement.textContent);
+                        var newTotal = totalAmount - inputValue;
+                        totalNewElement.textContent = newTotal.toLocaleString('en');
+                    }
+                });
+            </script>
+
+            
+
+
+                
+                
+           
+
+            </table>
+        </div>
+
+
+
+
+
+        
+   
+        <h4 style="font-family: morabba;text-align: right; direction: rtl ; color: #333; margin-right: 8px; margin-bottom: 2px;">توضیحات:</h4>
+    <div id="description-input" style="display: block;">
+        <input type="text" id="description-text" value="بدون توضیحات" placeholder="توضیحات">
+        <button type="button" onclick="showDescription()">نمایش</button>
+    </div>
+    <div id="description-output" style="display: none;"></div>
+
+
+
+</div>
+    
+    <script>
+    function showDescription() {
+        var descriptionInput = document.getElementById("description-input");
+        var descriptionOutput = document.getElementById("description-output");
+        var descriptionText = document.getElementById("description-text").value;
+    
+        descriptionInput.style.display = "none";
+        descriptionOutput.style.display = "block";
+        descriptionOutput.innerHTML = "<p>" + descriptionText + "</p>";
+    }
+    </script>
+
+
+
+    <script>
+
+
+
+
+
+        function formatPrice(input) {
+            var value = input.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            input.value = value;
+            calculateTotalPrice();
+        }
+
+        function calculateTotalPrice() {
+            var quantity = document.getElementById("product-quantity").value;
+            var price = document.getElementById("product-price").value.replace(/\D/g, "");
+            var totalPrice = quantity * price;
+            document.getElementById("total-price").value = totalPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function addRow() {
+    var productName = document.getElementById('product-name').value;
+    var productQuantity = document.getElementById('product-quantity').value;
+    var productPrice = document.getElementById('product-price').value;
+    var totalPrice = document.getElementById('total-price').value;
+
+    var table = document.getElementById("products-table");
+    var newRow = table.insertRow(-1);
+
+    var rowCount = table.rows.length - 1; // Get the current row count
+    var cell0 = newRow.insertCell(0);
+    var cell1 = newRow.insertCell(1);
+    var cell2 = newRow.insertCell(2);
+    var cell3 = newRow.insertCell(3);
+    var cell4 = newRow.insertCell(4);
+    var cell5 = newRow.insertCell(5);
+
+    cell0.textContent = rowCount; // Display row number
+    cell1.textContent = productName;
+    cell2.textContent = productQuantity;
+    cell3.textContent = productPrice;
+    cell4.textContent = totalPrice;
+
+    var editDeleteButton = document.createElement("button");
+    editDeleteButton.textContent = " مخفی";
+    editDeleteButton.onclick = function() {
+        // Toggle the visibility of cell5 in this row
+        if (cell5.style.display === 'none') {
+            cell5.style.display = 'table-cell';
+        } else {
+            cell5.style.display = 'none';
+        }
+    };
+
+    cell5.innerHTML = '<button id="tbl" onclick="editRow(this)">ویرایش</button>  <button id="tbl" onclick="deleteRow(this)">حذف</button>';
+    cell5.appendChild(editDeleteButton);
+
+    updateTotalRows();
+    updateTotalAmount();
+}
+    
+
+        function editRow(button) {
+            var row = button.parentNode.parentNode;
+            var cells = row.getElementsByTagName("td");
+
+            document.getElementById('product-name').value = cells[1].textContent;
+            document.getElementById('product-quantity').value = cells[2].textContent;
+            document.getElementById('product-price').value = cells[3].textContent;
+            document.getElementById('total-price').value = cells[4].textContent;
+
+            row.remove();
+            updateTotalRows();
+            updateTotalAmount();
+        }
+
+        function deleteRow(button) {
+            var row = button.parentNode.parentNode;
+            row.remove();
+            updateTotalRows();
+            updateTotalAmount();
+        }
+
+
+
+
+        function updateTotalRows() {
+    var total = 0;
+    var table = document.getElementById("products-table");
+    for (var i = 1; i < table.rows.length; i++) {
+        total += parseInt(table.rows[i].cells[2].textContent);
+    }
+    document.getElementById("total").textContent = total .toLocaleString();
+}
+
+        function separateByThree(number) {
+    var parts = number.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+}
+
+function updateTotalAmount() {
+    var totalAmount = 0;
+    var table = document.getElementById("products-table");
+    for (var i = 1; i < table.rows.length; i++) {
+        totalAmount += parseInt(table.rows[i].cells[4].textContent.replace(/\D/g, ""));
+    }
+    document.getElementById("total-amount").textContent = totalAmount;
+}
+
+updateTotalAmount();
+
+    </script>
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
