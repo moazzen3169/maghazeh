@@ -159,7 +159,7 @@
                                 <h3 class="text-2xl font-bold mt-2">
                                     <?php
                                     $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT COUNT(*) as total FROM products WHERE date LIKE '1404/3/%'";
+                                    $sql = "SELECT COUNT(*) as total FROM products WHERE date LIKE '1404/5/%'";
                                     $result = $conn->query($sql);
                                     $row = $result->fetch_assoc();
                                     echo $row["total"];
@@ -242,7 +242,7 @@
                                 <h3 class="text-2xl font-bold mt-2">
                                     <?php
                                     $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT SUM(price) AS total_price FROM products WHERE date LIKE '1404/3/%'";
+                                    $sql = "SELECT SUM(price) AS total_price FROM products WHERE date LIKE '1404/5/%'";
                                     $result = $conn->query($sql);
                                     $row = $result->fetch_assoc();
                                     echo number_format($row["total_price"], 0, '.', ',') . ",000";
@@ -480,6 +480,7 @@
                                     <option value="جدید">جدید</option>
                                     <option value="(کت دامن)">(کت دامن)</option>
                                     <option value="کت تکی">کت تکی</option>
+                                    <option value="دامن تکی">دامن تکی</option>
                                 </select>
                             </div>
 
