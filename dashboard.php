@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>فروشگاه هادی - داشبورد مدیریت</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="tailwind.js"></script>
+    <link href="css-library.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="color.css">
 
@@ -159,7 +159,7 @@
                                 <h3 class="text-2xl font-bold mt-2">
                                     <?php
                                     $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT COUNT(*) as total FROM products WHERE date LIKE '1404/5/%'";
+                                    $sql = "SELECT COUNT(*) as total FROM products WHERE date LIKE '1404/6/%'";
                                     $result = $conn->query($sql);
                                     $row = $result->fetch_assoc();
                                     echo $row["total"];
@@ -242,7 +242,7 @@
                                 <h3 class="text-2xl font-bold mt-2">
                                     <?php
                                     $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT SUM(price) AS total_price FROM products WHERE date LIKE '1404/5/%'";
+                                    $sql = "SELECT SUM(price) AS total_price FROM products WHERE date LIKE '1404/6/%'";
                                     $result = $conn->query($sql);
                                     $row = $result->fetch_assoc();
                                     echo number_format($row["total_price"], 0, '.', ',') . ",000";
@@ -343,7 +343,7 @@
                                 <tbody>
                                     <?php
                                     $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT name, COUNT(*) AS count FROM products WHERE date LIKE '1404/3/%' GROUP BY name ORDER BY count DESC LIMIT 5";
+                                    $sql = "SELECT name, COUNT(*) AS count FROM products WHERE date LIKE '1404/6/%' GROUP BY name ORDER BY count DESC LIMIT 5";
                                     $result = $conn->query($sql);
 
                                     if ($result->num_rows > 0) {
@@ -467,6 +467,7 @@
                                     <option value="چهار دکمه">چهار دکمه</option>
                                     <option value="تک دکمه">تک دکمه</option>
                                     <option value="سرهم">سرهم</option>
+                                    <option value="ملینا">ملینا</option>
                                     <option value="ژاکات">ژاکات</option>
                                     <option value="نفیس">نفیس</option>
                                     <option value="عروس">عروس</option>
@@ -475,7 +476,7 @@
                                     <option value="کمر دار">کمردار</option>
                                     <option value="تهران جدید">تهران جدید</option>
                                     <option value="منج دوزی">منج دوزی</option>
-                                    <option value="جدید راه راه">جدید راه راه</option>
+                                    <option value="کج راه">کج راه</option>
                                     <option value="ارشال">ارشال</option>
                                     <option value="جدید">جدید</option>
                                     <option value="(کت دامن)">(کت دامن)</option>
