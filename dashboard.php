@@ -464,8 +464,8 @@ renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                         <div>
                             <h3 class="font-semibold text-gray-800 text-lg">لیست محصولات</h3>
-                            <div class="flex items-center mt-2 text-sm text-gray-500">
-                                <i class="fas fa-info-circle ml-1"></i>
+                            <div class="flex items-center mt-2 text-sm text-gray-500 gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#2563eb"><g fill="none"><circle cx="12" cy="12" r="9.25" stroke="#2563eb" stroke-width="1.5"/><path stroke="#2563eb" stroke-linecap="round" stroke-width="1.5" d="M12 11.813v5"/><circle cx="12" cy="8.438" r="1.25" fill="#2563eb"/></g></svg>
                                 <?php
                                 $conn = new mysqli("localhost", "root", "", "salam");
 
@@ -507,7 +507,7 @@ renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','
                                     value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>"
                                     class="bg-gray-100 border-0 rounded-lg px-4 py-2 pr-10 w-full md:w-64 focus:ring-2 focus:ring-blue-500">
                                 <button type="submit" class="absolute left-3 top-2 text-gray-400">
-                                    <i class="fas fa-search"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#2563eb"><path fill="#currentColor" d="M15.096 5.904a6.5 6.5 0 1 0-9.192 9.192a6.5 6.5 0 0 0 9.192-9.192ZM4.49 4.49a8.5 8.5 0 0 1 12.686 11.272l5.345 5.345l-1.414 1.414l-5.345-5.345A8.501 8.501 0 0 1 4.49 4.49Z"/></svg>
                                 </button>
                             </div>
                         </form>
@@ -621,8 +621,7 @@ $conn->close();
   <div class="bg-white w-11/12 md:w-2/3 lg:w-1/2 rounded-2xl shadow-xl p-6 relative">
     
     <!-- دکمه بستن -->
-    <button onclick="closeInvoice()" 
-            class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+    <button onclick="closeInvoice()" > <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 1024 1024" fill="#2563eb"><path fill="#2563eb" d="M512 0C229.232 0 0 229.232 0 512c0 282.784 229.232 512 512 512c282.784 0 512-229.216 512-512C1024 229.232 794.784 0 512 0zm0 961.008c-247.024 0-448-201.984-448-449.01c0-247.024 200.976-448 448-448s448 200.977 448 448s-200.976 449.01-448 449.01zm181.008-630.016c-12.496-12.496-32.752-12.496-45.248 0L512 466.752l-135.76-135.76c-12.496-12.496-32.752-12.496-45.264 0c-12.496 12.496-12.496 32.752 0 45.248L466.736 512l-135.76 135.76c-12.496 12.48-12.496 32.769 0 45.249c12.496 12.496 32.752 12.496 45.264 0L512 557.249l135.76 135.76c12.496 12.496 32.752 12.496 45.248 0c12.496-12.48 12.496-32.769 0-45.249L557.248 512l135.76-135.76c12.512-12.512 12.512-32.768 0-45.248z"/></svg> </button>
     
     <div id="invoiceContent" class="text-gray-800">
       <!-- محتوای فاکتور اینجا با جاوااسکریپت پر میشه -->

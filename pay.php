@@ -42,6 +42,22 @@
 
 .sidebar-item:hover {
     background-color: var(--color-hover-bg);
+}.product-table{
+    text-align: center;
+}
+
+
+
+.submit-btn{
+    background-color: #2563eb;
+}
+
+.submit-btn:hover{
+    background-color:rgb(36, 86, 193);
+}
+
+.show-detail{
+    background: linear-gradient(90deg, #3B82F6 0%, #2563eb 100%);
 }
 
     </style>
@@ -148,15 +164,15 @@
             </thead>
             <tbody>
                 <?php foreach ($destinations as $destination): ?>
-                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                <tr class="border-b border-gray-100 hover:bg-gray-50 ">
                     <td class="py-3 text-right"><?= htmlspecialchars($destination['destination']) ?></td>
                     <td class="py-3 text-center"><?= $destination['payment_count'] ?></td>
                     <td class="py-3 text-center"><?= number_format($destination['total_amount']) ?> تومان</td>
                     <td class="py-3 text-center">
                         <a href="pay.php?search=<?= urlencode($destination['destination']) ?>" 
-                           class="text-blue-500 hover:text-blue-700 transition duration-200" 
+                           class="show-detail" 
                            title="مشاهده جزئیات">
-                            <i class="fas fa-eye"></i>
+                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#2563eb"><g fill="none" stroke="#2563eb" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22c3.53 0 6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159Z"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0Z"/></g></svg>
                         </a>
                     </td>
                 </tr>
@@ -262,7 +278,7 @@
                             <!-- تاریخ پرداخت -->
                             <div class="space-y-2">
                                 <label class="block text-sm font-medium text-gray-700">تاریخ پرداخت</label>
-                                <input type="text" name="payment_date" id="payment-date"
+                                <input type="text" name="payment_date" id="date-input"
                                     class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500"
                                     required>
                             </div>
@@ -279,8 +295,8 @@
                         <!-- Submit Button -->
                         <div class="grid grid-cols-1">
                             <button type="submit"
-                                class="w-full md:w-3/3 mx-auto bg-green-500 hover:bg-green-600 text-white py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center">
-                                <i class="fas fa-money-bill-wave ml-2"></i>
+                                class="w-full md:w-3/3 mx-auto submit-btn  text-white py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                                
                                 <span>ثبت پرداخت</span>
                             </button>
                         </div>
@@ -404,7 +420,7 @@
                                         echo '<td class="py-3 text-center">' . htmlspecialchars($row['reason']) . '</td>';
                                         echo '<td class="py-3 text-center">';
                                         echo '<a href="delete_payment.php?id=' . $row['id'] . '" class="text-red-500 hover:text-red-700 transition duration-200" title="حذف">';
-                                        echo '<i class="fas fa-trash-alt"></i>';
+                                        echo '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EF4444"><path fill="none" stroke="#EF4444" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 5v6m4-6v6"/></svg>';
                                         echo '</a>';
                                         echo '</td>';
                                         echo '</tr>';
@@ -454,6 +470,8 @@
                 console.error('خطا در دریافت تاریخ:', error);
             });
     </script>
+    <script src="scripts.js"></script>
+
 </body>
 
 </html>

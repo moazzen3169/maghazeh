@@ -67,7 +67,7 @@ $netAmount = $totalNormalAmount - $totalReturnedAmount;
 
         .container-65 {
             width: 100%;
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
             padding: 20px;
@@ -101,13 +101,10 @@ $netAmount = $totalNormalAmount - $totalReturnedAmount;
         }
 
         .invoice-table th {
-            background-color: #555;
+            background-color: #2563eb;
             color: white;
         }
 
-        .invoice-table tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
 
         .invoice-table tr:hover {
             background-color: #e9e9e9;
@@ -128,14 +125,11 @@ $netAmount = $totalNormalAmount - $totalReturnedAmount;
         }
 
         .summary-table th {
-            background-color: #555;
+            background-color: #2563eb;
             color: white;
         }
 
-        .summary-table tr:last-child {
-            font-weight: bold;
-            background-color: #f2f2f2;
-        }
+
 
         /* Action Buttons */
         .action-buttons {

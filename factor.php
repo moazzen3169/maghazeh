@@ -101,6 +101,11 @@
             margin-left: 10px;
             flex-shrink: 0;
         }
+
+        .show_factor_btn{
+            background: linear-gradient(90deg, #3B82F6 0%, #2563eb 100%);
+
+        }
     </style>
 </head>
 
@@ -275,8 +280,7 @@
                         <!-- دکمه مشاهده جزییات -->
                         <div class="mt-6">
                             <a href="factor_details.php?month=<?= urlencode($month['month_year'] ?? '') ?>"
-                                class="block text-center bg-gray-800 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition duration-200 text-sm w-full">
-                                <i class="fas fa-eye ml-2"></i>
+                                class="block text-center  show_factor_btn  hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition duration-200 text-sm w-full">
                                 مشاهده جزییات ماه
                             </a>
                         </div>

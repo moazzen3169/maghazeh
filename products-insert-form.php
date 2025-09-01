@@ -46,6 +46,8 @@
         margin-left: 30px;
         color: var(--color-text);
     }
+
+
 </style>
 <link rel="stylesheet" href="color.css">
 <body >
@@ -160,8 +162,8 @@
                     <!-- دکمه ثبت: یک ردیف جدا -->
                     <div class="mt-6">
                         <button type="submit"
-                            class="w-full md:w-1/3 mx-auto bg-blue-500 hover:bg-blue-600 text-white py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center">
-                            <i class="fas fa-plus ml-2"></i>
+                            class="w-full md:w-1/3 mx-auto bg-blue-500 hover:bg-blue-600 text-white py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center submi-btn" >
+                            
                             <span>ثبت محصول</span>
                         </button>
                     </div>
@@ -182,5 +184,6 @@
         </div>
     </div>
 <script src="tailwind.js"></script>
+<script src="scripts.js"></script>
 
 </body>
