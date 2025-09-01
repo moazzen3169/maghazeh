@@ -676,14 +676,13 @@ function showInvoice(name, size, color, date, price , id) {
               <td class="border px-2 py-1">${price},000</td>
               <td class="border px-2 py-1">${price},000</td>
             </tr>
+            <!-- ردیف جمع کل -->
+            <tr class="bg-gray-100 font-bold">
+              <td colspan="5" class="border px-2 py-2 text-right">جمع کل</td>
+              <td class="border px-2 py-2">${price},000 تومان</td>
+            </tr>
           </tbody>
         </table>
-
-        <!-- بخش جمع کل -->
-        <div class="border p-3 mb-4">
-          <p><strong>مبلغ فاکتور:</strong> ${price},000 ریال</p>
-          <p><strong>جمع کل:</strong> ${price},000 تومان</p>
-        </div>
 
         <!-- اطلاعات تماس -->
         <div class="text-center text-sm">
@@ -697,6 +696,7 @@ function showInvoice(name, size, color, date, price , id) {
     document.getElementById("invoiceModal").classList.remove("hidden");
     document.getElementById("invoiceModal").classList.add("flex");
 }
+
 
 function closeInvoice() {
     document.getElementById("invoiceModal").classList.add("hidden");
