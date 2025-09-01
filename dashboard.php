@@ -64,49 +64,6 @@
         <?php include("sidebar.php"); ?>
 
 
-        <!-- Mobile Sidebar Toggle -->
-        <div id="mobileSidebar"
-            class="fixed inset-0 z-40 bg-white transform -translate-x-full transition-transform duration-300 md:hidden">
-            <div class="p-4 border-b border-gray-200">
-                <h1 class="text-xl font-bold text-gray-800 text-center">فروشگاه هادی</h1>
-            </div>
-            <nav class="flex-1 p-4 space-y-2">
-                <a href="#" class="sidebar-item flex items-center p-3 rounded-lg text-blue-600 bg-blue-50">
-                    <i class="fas fa-chart-line ml-2"></i>
-                    <span>داشبورد</span>
-                </a>
-                <a href="products.php"
-                    class="sidebar-item flex items-center p-3 rounded-lg text-gray-600 hover:text-blue-600">
-                    <i class="fas fa-box ml-2"></i>
-                    <span>محصولات</span>
-                </a>
-                <a href="factor.php"
-                    class="sidebar-item flex items-center p-3 rounded-lg text-gray-600 hover:text-blue-600">
-                    <i class="fas fa-file-invoice-dollar ml-2"></i>
-                    <span>فاکتورها</span>
-                </a>
-                <a href="pay.php"
-                    class="sidebar-item flex items-center p-3 rounded-lg text-gray-600 hover:text-blue-600">
-                    <i class="fas fa-users ml-2"></i>
-                    <span>پرداخت ها</span>
-                </a>
-                <a href="#" class="sidebar-item flex items-center p-3 rounded-lg text-gray-600 hover:text-blue-600">
-                    <i class="fas fa-cog ml-2"></i>
-                    <span>تنظیمات</span>
-                </a>
-            </nav>
-            <div class="p-4 border-t border-gray-200">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <i class="fas fa-user text-blue-500"></i>
-                    </div>
-                    <div class="mr-3">
-                        <p class="font-medium text-gray-800">مدیر سیستم</p>
-                        <p class="text-sm text-gray-500">admin@salam.com</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Main Content -->
         <div class="flex-1 overflow-auto relative">
@@ -119,171 +76,218 @@
                 <!-- Stats Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
                     <!-- Daily Revenue -->
+                    <?php
+// تابع ساده برای گرفتن سال و ماه شمسی جاری
+function getCurrentJalaliYearMonth() {
+    $tz = new DateTimeZone('Asia/Tehran');
+    $date = new DateTime('now', $tz);
+    $gy = $date->format('Y');
+    $gm = $date->format('m');
+    $gd = $date->format('d');
+
+    // تبدیل میلادی به شمسی
+    list($jy, $jm, $jd) = gregorian_to_jalali($gy, $gm, $gd);
+    return array($jy, $jm); // بازگشت سال و ماه جدا
+}
+
+// تابع تبدیل میلادی به شمسی
+function gregorian_to_jalali($g_y, $g_m, $g_d) {
+    $g_days_in_month = array(31,28,31,30,31,30,31,31,30,31,30,31);
+    $j_days_in_month = array(31,31,31,31,31,31,30,30,30,30,30,29);
+    $gy = $g_y-1600;
+    $gm = $g_m-1;
+    $gd = $g_d-1;
+    $g_day_no = 365*$gy + intval(($gy+3)/4) - intval(($gy+99)/100) + intval(($gy+399)/400);
+    for ($i=0;$i<$gm;$i++)
+        $g_day_no += $g_days_in_month[$i];
+    if ($gm>1 && (($gy%4==0 && $gy%100!=0) || ($gy%400==0)))
+        $g_day_no++;
+    $g_day_no += $gd;
+    $j_day_no = $g_day_no-79;
+    $j_np = intval($j_day_no/12053);
+    $j_day_no %= 12053;
+    $jy = 979+33*$j_np + 4*intval($j_day_no/1461);
+    $j_day_no %= 1461;
+    if ($j_day_no >= 366) {
+        $jy += intval(($j_day_no-1)/365);
+        $j_day_no = ($j_day_no-1)%365;
+    }
+    for ($i = 0; $i < 11 && $j_day_no >= $j_days_in_month[$i]; $i++)
+        $j_day_no -= $j_days_in_month[$i];
+    $jm = $i+1;
+    $jd = $j_day_no+1;
+    return array($jy, $jm, $jd);
+}
+
+// گرفتن سال و ماه جاری شمسی
+list($currentYear, $currentMonth) = getCurrentJalaliYearMonth();
+$monthLike = "$currentYear/$currentMonth/%";
+$yearLike = "$currentYear/%";
+
+// اتصال به دیتابیس
+$conn = new mysqli("localhost", "root", "", "salam");
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// داده‌ها
+// فروش روزانه
+$sqlDailySales = "SELECT COUNT(*) as total FROM products WHERE DATE(date_added) = CURRENT_DATE()";
+$dailySales = $conn->query($sqlDailySales)->fetch_assoc()["total"] ?? 0;
+
+// درآمد روزانه
+$sqlDailyRevenue = "SELECT SUM(price) AS total_price FROM products WHERE DATE(date_added) = CURRENT_DATE()";
+$dailyRevenue = $conn->query($sqlDailyRevenue)->fetch_assoc()["total_price"] ?? 0;
+
+// فروش ماهانه
+$sqlMonthlySales = "SELECT COUNT(*) as total FROM products WHERE date LIKE '$monthLike'";
+$monthlySales = $conn->query($sqlMonthlySales)->fetch_assoc()["total"] ?? 0;
+
+// درآمد ماهانه
+$sqlMonthlyRevenue = "SELECT SUM(price) AS total_price FROM products WHERE date LIKE '$monthLike'";
+$monthlyRevenue = $conn->query($sqlMonthlyRevenue)->fetch_assoc()["total_price"] ?? 0;
+
+// فروش سالانه
+$sqlAnnualSales = "SELECT COUNT(*) as total FROM products WHERE date LIKE '$yearLike'";
+$annualSales = $conn->query($sqlAnnualSales)->fetch_assoc()["total"] ?? 0;
+
+$conn->close();
+?>
+
+<!-- Daily Sales -->
+<div class="glass-card p-6 rounded-xl">
+    <div class="flex justify-between items-start">
+        <div>
+            <p class="text-gray-500">فروش روزانه</p>
+            <h3 class="text-2xl font-bold mt-2"><?= $dailySales ?></h3>
+            <p class="text-sm text-green-500 mt-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M5 10l7-7 7 7M5 20h14"/>
+                </svg>
+                <span>3.8% نسبت به دیروز</span>
+            </p>
+        </div>
+        <div class="bg-orange-100 p-3 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Monthly Sales -->
+<div class="glass-card p-6 rounded-xl">
+    <div class="flex justify-between items-start">
+        <div>
+            <p class="text-gray-500">فروش ماهانه</p>
+            <h3 class="text-2xl font-bold mt-2"><?= $monthlySales ?></h3>
+            <p class="text-sm text-green-500 mt-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M5 10l7-7 7 7M5 20h14"/>
+                </svg>
+                <span>5.2% نسبت به ماه قبل</span>
+            </p>
+        </div>
+        <div class="bg-blue-100 p-3 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M3 7h18M3 12h18M3 17h18"/>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Annual Sales -->
+<div class="glass-card p-6 rounded-xl">
+    <div class="flex justify-between items-start">
+        <div>
+            <p class="text-gray-500">فروش سالانه (<?= $currentYear ?>)</p>
+            <h3 class="text-2xl font-bold mt-2"><?= $annualSales ?></h3>
+            <p class="text-sm text-green-500 mt-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M5 10l7-7 7 7M5 20h14"/>
+                </svg>
+                <span>15.3% نسبت به سال قبل</span>
+            </p>
+        </div>
+        <div class="bg-red-100 p-3 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Daily Revenue -->
+<div class="glass-card p-6 rounded-xl">
+    <div class="flex justify-between items-start">
+        <div>
+            <p class="text-gray-500">درآمد روزانه</p>
+            <h3 class="text-2xl font-bold mt-2"><?= number_format($dailyRevenue, 0, '.', ',') ?>,000</h3>
+            <p class="text-sm text-green-500 mt-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M5 10l7-7 7 7M5 20h14"/>
+                </svg>
+                <span>8.4% نسبت به دیروز</span>
+            </p>
+        </div>
+        <div class="bg-yellow-100 p-3 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M12 8c-2.28 0-4 1.72-4 4s1.72 4 4 4 4-1.72 4-4-1.72-4-4-4z"/>
+                <path d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.54 7.54l-1.41-1.41M6.87 6.87 5.46 5.46m12.73 0-1.41 1.41M6.87 17.13l-1.41 1.41"/>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<!-- Monthly Revenue -->
+<div class="glass-card p-6 rounded-xl">
+    <div class="flex justify-between items-start">
+        <div>
+            <p class="text-gray-500">درآمد ماهانه</p>
+            <h3 class="text-2xl font-bold mt-2"><?= number_format($monthlyRevenue, 0, '.', ',') ?>,000</h3>
+            <p class="text-sm text-green-500 mt-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M5 10l7-7 7 7M5 20h14"/>
+                </svg>
+                <span>12.7% نسبت به ماه قبل</span>
+            </p>
+        </div>
+        <div class="bg-green-100 p-3 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M12 8c-2.28 0-4 1.72-4 4s1.72 4 4 4 4-1.72 4-4-1.72-4-4-4z"/>
+                <path d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.54 7.54l-1.41-1.41M6.87 6.87 5.46 5.46m12.73 0-1.41 1.41M6.87 17.13l-1.41 1.41"/>
+            </svg>
+        </div>
+    </div>
+</div>
 
 
+<!-- Top Products -->
+<div class="glass-card p-6 rounded-xl">
+    <div class="flex justify-between items-start">
+        <div>
+            <p class="text-gray-500">محصولات پرفروش</p>
+            <h3 class="text-2xl font-bold mt-2">
+                <?php
+                $conn = new mysqli("localhost", "root", "", "salam");
+                $sql = "SELECT name FROM products WHERE date LIKE '1404/3/%' GROUP BY name ORDER BY COUNT(*) DESC LIMIT 1";
+                $result = $conn->query($sql);
+                $row = $result->fetch_assoc();
+                echo $row["name"] ?? "N/A";
+                $conn->close();
+                ?>
+            </h3>
+            <p class="text-sm text-gray-500 mt-2">پرفروش ترین محصول</p>
+        </div>
+        <div class="bg-purple-100 p-3 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+            </svg>
+        </div>
+    </div>
+    </div>
+    </div>
 
-                    <!-- Daily Sales -->
-                    <div class="glass-card p-6 rounded-xl">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-gray-500">فروش روزانه</p>
-                                <h3 class="text-2xl font-bold mt-2">
-                                    <?php
-                                    $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT COUNT(*) as total FROM products WHERE DATE(date_added) = CURRENT_DATE()";
-                                    $result = $conn->query($sql);
-                                    $row = $result->fetch_assoc();
-                                    echo $row["total"];
-                                    $conn->close();
-                                    ?>
-                                </h3>
-                                <p class="text-sm text-green-500 mt-2">
-                                    <i class="fas fa-arrow-up ml-1"></i>
-                                    <span>3.8% نسبت به دیروز</span>
-                                </p>
-                            </div>
-                            <div class="bg-orange-100 p-3 rounded-lg">
-                                <i class="fas fa-calendar-day text-orange-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-
-                    <!-- Monthly Sales -->
-                    <div class="glass-card p-6 rounded-xl">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-gray-500">فروش ماهانه</p>
-                                <h3 class="text-2xl font-bold mt-2">
-                                    <?php
-                                    $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT COUNT(*) as total FROM products WHERE date LIKE '1404/6/%'";
-                                    $result = $conn->query($sql);
-                                    $row = $result->fetch_assoc();
-                                    echo $row["total"];
-                                    $conn->close();
-                                    ?>
-                                </h3>
-                                <p class="text-sm text-green-500 mt-2">
-                                    <i class="fas fa-arrow-up ml-1"></i>
-                                    <span>5.2% نسبت به ماه قبل</span>
-                                </p>
-                            </div>
-                            <div class="bg-blue-100 p-3 rounded-lg">
-                                <i class="fas fa-shopping-bag text-blue-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- Annual Sales -->
-                    <div class="glass-card p-6 rounded-xl">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-gray-500">فروش سالانه(1404) </p>
-                                <h3 class="text-2xl font-bold mt-2">
-                                    <?php
-                                    $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT COUNT(*) as total FROM products WHERE date LIKE '1404/%/%'";
-                                    $result = $conn->query($sql);
-                                    $row = $result->fetch_assoc();
-                                    echo $row["total"];
-                                    $conn->close();
-                                    ?>
-                                </h3>
-                                <p class="text-sm text-green-500 mt-2">
-                                    <i class="fas fa-arrow-up ml-1"></i>
-                                    <span>15.3% نسبت به سال قبل</span>
-                                </p>
-                            </div>
-                            <div class="bg-red-100 p-3 rounded-lg">
-                                <i class="fas fa-calendar-alt text-red-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="glass-card p-6 rounded-xl">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-gray-500">درآمد روزانه</p>
-                                <h3 class="text-2xl font-bold mt-2">
-                                    <?php
-                                    $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT SUM(price) AS total_price FROM products WHERE DATE(date_added) = CURRENT_DATE()";
-                                    $result = $conn->query($sql);
-                                    $row = $result->fetch_assoc();
-                                    $total = $row["total_price"] ?? 0;
-                                    echo number_format($total, 0, '.', ',') . ",000";
-                                    $conn->close();
-                                    ?>
-                                </h3>
-                                <p class="text-sm text-green-500 mt-2">
-                                    <i class="fas fa-arrow-up ml-1"></i>
-                                    <span>8.4% نسبت به دیروز</span>
-                                </p>
-                            </div>
-                            <div class="bg-yellow-100 p-3 rounded-lg">
-                                <i class="fas fa-money-bill-wave text-yellow-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-
-                    <!-- Monthly Revenue -->
-                    <div class="glass-card p-6 rounded-xl">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-gray-500">درآمد ماهانه</p>
-                                <h3 class="text-2xl font-bold mt-2">
-                                    <?php
-                                    $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT SUM(price) AS total_price FROM products WHERE date LIKE '1404/6/%'";
-                                    $result = $conn->query($sql);
-                                    $row = $result->fetch_assoc();
-                                    echo number_format($row["total_price"], 0, '.', ',') . ",000";
-                                    $conn->close();
-                                    ?>
-                                </h3>
-                                <p class="text-sm text-green-500 mt-2">
-                                    <i class="fas fa-arrow-up ml-1"></i>
-                                    <span>12.7% نسبت به ماه قبل</span>
-                                </p>
-                            </div>
-                            <div class="bg-green-100 p-3 rounded-lg">
-                                <i class="fas fa-wallet text-green-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- Top Products -->
-                    <div class="glass-card p-6 rounded-xl">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-gray-500">محصولات پرفروش</p>
-                                <h3 class="text-2xl font-bold mt-2">
-                                    <?php
-                                    $conn = new mysqli("localhost", "root", "", "salam");
-                                    $sql = "SELECT name FROM products WHERE date LIKE '1404/3/%' GROUP BY name ORDER BY COUNT(*) DESC LIMIT 1";
-                                    $result = $conn->query($sql);
-                                    $row = $result->fetch_assoc();
-                                    echo $row["name"] ?? "N/A";
-                                    $conn->close();
-                                    ?>
-                                </h3>
-                                <p class="text-sm text-gray-500 mt-2">پرفروش ترین محصول</p>
-                            </div>
-                            <div class="bg-purple-100 p-3 rounded-lg">
-                                <i class="fas fa-star text-purple-500 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Charts and Tables -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
@@ -446,112 +450,156 @@
                         });
                     });
                 </script>
+<!-- Add Product Form -->
+<div class="glass-card p-6 rounded-xl mb-6">
+    <h3 class="font-semibold text-gray-800 mb-6 text-lg border-b pb-3">ثبت محصول جدید</h3>
+    <form method="post" action="add.php" class="grid gap-6" id="addProductForm">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+            <!-- نام محصول -->
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">نام محصول</label>
+                <select name="id" id="productSelect"
+                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+                    <?php
+                    $conn = new mysqli("localhost", "root", "", "salam");
+                    $sql = "SELECT id, product_name FROM product_prices ORDER BY product_name ASC";
+                    $result = $conn->query($sql);
 
-                <!-- Add Product Form -->
-                <!-- Add Product Form -->
-                <div class="glass-card p-6 rounded-xl mb-6">
-                    <h3 class="font-semibold text-gray-800 mb-6 text-lg border-b pb-3">ثبت محصول جدید</h3>
-                    <form method="post" action="add.php" class="grid gap-6">
-                        <!-- ردیف اول - فیلدهای ورودی -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-                            <!-- نام محصول -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">نام محصول</label>
-                                <select name="name"
-                                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-                                    <option value="دلبر">دلبر</option>
-                                    <option value="باتری">باتری</option>
-                                    <option value="سرو">سرو</option>
-                                    <option value="شراره">شراره</option>
-                                    <option value="فارکس">فارکس</option>
-                                    <option value="چهار دکمه">چهار دکمه</option>
-                                    <option value="تک دکمه">تک دکمه</option>
-                                    <option value="سرهم">سرهم</option>
-                                    <option value="ملینا">ملینا</option>
-                                    <option value="ژاکات">ژاکات</option>
-                                    <option value="نفیس">نفیس</option>
-                                    <option value="عروس">عروس</option>
-                                    <option value="پاپیونی">پاپیونی</option>
-                                    <option value="یقه انگیلیسی">یقه انگلیسی</option>
-                                    <option value="کمر دار">کمردار</option>
-                                    <option value="تهران جدید">تهران جدید</option>
-                                    <option value="منج دوزی">منج دوزی</option>
-                                    <option value="کج راه">کج راه</option>
-                                    <option value="ارشال">ارشال</option>
-                                    <option value="جدید">جدید</option>
-                                    <option value="(کت دامن)">(کت دامن)</option>
-                                    <option value="کت تکی">کت تکی</option>
-                                    <option value="دامن تکی">دامن تکی</option>
-                                </select>
-                            </div>
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<option value='" . $row["id"] . "'>" . htmlspecialchars($row["product_name"]) . "</option>";
+                        }
+                    } else {
+                        echo "<option disabled>هیچ محصولی یافت نشد</option>";
+                    }
+                    $conn->close();
+                    ?>
+                    <option value="add_new" class="text-blue-600 font-bold">+ افزودن محصول جدید</option>
+                </select>
+                <!-- فیلد نام محصول جدید پنهان -->
+                <input type="text" name="new_name" id="newProductName" placeholder="نام محصول جدید"
+                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 mt-2 hidden">
+            </div>
 
-                            <!-- رنگ -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">رنگ</label>
-                                <select name="color"
-                                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-                                    <option value="مشکی">مشکی</option>
-                                    <option value="سفید">سفید</option>
-                                    <option value="قرمز">قرمز</option>
-                                    <option value="سبز">سبز</option>
-                                    <option value="زرد">زرد</option>
-                                    <option value="خردلی">خردلی</option>
-                                    <option value="کرمی">کرمی</option>
-                                    <option value="قهوه ای">قهوه ای</option>
-                                    <option value="صورتی">صورتی</option>
-                                    <option value="زرشکی">زرشکی</option>
-                                    <option value="توسی">توسی</option>
-                                    <option value="گلبهی">گلبهی</option>
-                                    <option value="بنفش">بنفش</option>
-                                    <option value="آبی">آبی</option>
-                                    <option value="تعویضی">تعویضی</option>
-                                </select>
-                            </div>
+            <!-- رنگ -->
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">رنگ</label>
+                <select name="color"
+                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+                    <option value="مشکی">مشکی</option>
+                    <option value="سفید">سفید</option>
+                    <option value="قرمز">قرمز</option>
+                    <option value="سبز">سبز</option>
+                    <option value="زرد">زرد</option>
+                    <option value="خردلی">خردلی</option>
+                    <option value="کرمی">کرمی</option>
+                    <option value="قهوه ای">قهوه ای</option>
+                    <option value="صورتی">صورتی</option>
+                    <option value="زرشکی">زرشکی</option>
+                    <option value="توسی">توسی</option>
+                    <option value="گلبهی">گلبهی</option>
+                    <option value="بنفش">بنفش</option>
+                    <option value="آبی">آبی</option>
+                    <option value="تعویضی">تعویضی</option>
+                </select>
+            </div>
 
-                            <!-- سایز -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">سایز</label>
-                                <select name="size"
-                                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-                                    <option value="36">36</option>
-                                    <option value="38">38</option>
-                                    <option value="40">40</option>
-                                    <option value="42">42</option>
-                                    <option value="44">44</option>
-                                    <option value="46">46</option>
-                                    <option value="48">48</option>
-                                    <option value="50">50</option>
-                                    <option value="52">52</option>
-                                    <option value="54">54</option>
-                                    <option value="56">56</option>
-                                </select>
-                            </div>
+            <!-- سایز -->
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">سایز</label>
+                <select name="size"
+                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+                    <option value="36">36</option>
+                    <option value="38">38</option>
+                    <option value="40">40</option>
+                    <option value="42">42</option>
+                    <option value="44">44</option>
+                    <option value="46">46</option>
+                    <option value="48">48</option>
+                    <option value="50">50</option>
+                    <option value="52">52</option>
+                    <option value="54">54</option>
+                    <option value="56">56</option>
+                </select>
+            </div>
 
-                            <!-- تاریخ -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">تاریخ</label>
-                                <input type="text" name="date" id="date-input"
-                                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500" />
-                            </div>
+            <!-- تاریخ -->
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">تاریخ</label>
+                <input type="text" name="date" id="date-input"
+                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500" />
+            </div>
 
-                            <!-- قیمت -->
-                            <div class="space-y-2">
-                                <label class="block text-sm font-medium text-gray-700">قیمت</label>
-                                <input type="text" name="price" placeholder="قیمت"
-                                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-                            </div>
-                        </div>
+            <!-- قیمت -->
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">قیمت</label>
+                <input type="text" name="price" placeholder="قیمت"
+                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
 
-                        <!-- ردیف دوم - دکمه ثبت -->
-                        <div class="grid grid-cols-1">
-                            <button type="submit"
-                                class="w-full md:w-3/3 mx-auto bg-blue-500 hover:bg-blue-600 text-white py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center">
-                                <i class="fas fa-plus ml-2"></i>
-                                <span>ثبت محصول</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+        <div class="grid grid-cols-1">
+            <button type="submit"
+                class="w-full md:w-3/3 mx-auto bg-blue-500 hover:bg-blue-600 text-white py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center">
+                <i class="fas fa-plus ml-2"></i>
+                <span>ثبت محصول</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- JS برای نمایش فیلد محصول جدید -->
+<script>
+document.getElementById('productSelect').addEventListener('change', function() {
+    var newNameInput = document.getElementById('newProductName');
+    if (this.value === 'add_new') {
+        newNameInput.classList.remove('hidden');
+    } else {
+        newNameInput.classList.add('hidden');
+    }
+});
+</script>
+
+
+<!-- Modal (پاپ آپ) -->
+<div id="addProductModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+        <h2 class="text-lg font-bold mb-4">افزودن محصول جدید</h2>
+        <form id="addProductForm" method="POST" action="insert_product.php" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">نام محصول</label>
+                <input type="text" name="name" required
+                    class="w-full bg-gray-100 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">قیمت خرید (فی)</label>
+                <input type="number" name="unit_price" required
+                    class="w-full bg-gray-100 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeModal()"
+                    class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">انصراف</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">ثبت</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const productSelect = document.getElementById("productSelect");
+    const modal = document.getElementById("addProductModal");
+
+    productSelect.addEventListener("change", function () {
+        if (this.value === "add_new") {
+            modal.classList.remove("hidden");
+            this.value = ""; // برگرداندن انتخاب به حالت خالی
+        }
+    });
+
+    function closeModal() {
+        modal.classList.add("hidden");
+    }
+</script>
 
                 <!-- Search and Products Table -->
                 <div class="glass-card p-6 rounded-xl">
@@ -623,65 +671,79 @@
                                 </tr>
                             </thead>
                             <tbody id="products-table-body">
-                                <?php
-                                $conn = new mysqli("localhost", "root", "", "salam");
+                            <?php
+$conn = new mysqli("localhost", "root", "", "salam");
 
-                                // تعیین محدودیت نمایش
-                                $limit = isset($_GET['show_all']) ? 1000 : 5;
+// تعیین محدودیت نمایش
+$limit = isset($_GET['show_all']) ? 1000 : 5;
 
-                                if (isset($_GET['search'])) {
-                                    $searchTerm = $conn->real_escape_string($_GET['search']);
-                                    $sql = "SELECT * FROM products WHERE name LIKE '%$searchTerm%' OR price LIKE '%$searchTerm%' OR size LIKE '%$searchTerm%' OR date LIKE '%$searchTerm%' OR color LIKE '%$searchTerm%' ORDER BY id DESC LIMIT $limit";
-                                } else {
-                                    $sql = "SELECT * FROM products ORDER BY id DESC LIMIT $limit";
-                                }
+if (isset($_GET['search'])) {
+    $searchTerm = $conn->real_escape_string($_GET['search']);
+    $sql = "SELECT * FROM products WHERE name LIKE '%$searchTerm%' OR price LIKE '%$searchTerm%' OR size LIKE '%$searchTerm%' OR date LIKE '%$searchTerm%' OR color LIKE '%$searchTerm%' ORDER BY id DESC LIMIT $limit";
+} else {
+    $sql = "SELECT * FROM products ORDER BY id DESC LIMIT $limit";
+}
 
-                                $result = $conn->query($sql);
-                                $total_rows = $result->num_rows;
+$result = $conn->query($sql);
+$total_rows = $result->num_rows;
 
-                                if ($total_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo '<tr class="border-b border-gray-100 hover:bg-gray-50">';
-                                        echo '<td class="py-3 text-right">' . htmlspecialchars($row['name']) . '</td>';
-                                        echo '<td class="py-3 text-center">' . htmlspecialchars($row['size']) . '</td>';
-                                        echo '<td class="py-3 text-center">' . htmlspecialchars($row['color']) . '</td>';
-                                        echo '<td class="py-3 text-center">' . htmlspecialchars($row['date']) . '</td>';
-                                        echo '<td class="py-3 text-center">' . number_format(floatval($row['price']), 0, '.', ',') . ',000 تومان</td>';
-                                        echo '<td class="py-3 text-center">';
-                                        echo '<a href="delete_product.php?id=' . $row['id'] . '" class="text-red-500 hover:text-red-700 transition duration-200" title="حذف">';
-                                        echo '<i class="fas fa-trash-alt"></i>';
-                                        echo '</a>';
-                                        echo '</td>';
-                                        echo '</tr>';
-                                    }
+if ($total_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo '<tr class="border-b border-gray-100 hover:bg-gray-50">';
+        echo '<td class="py-3 text-right">' . htmlspecialchars($row['name']) . '</td>';
+        echo '<td class="py-3 text-center">' . htmlspecialchars($row['size']) . '</td>';
+        echo '<td class="py-3 text-center">' . htmlspecialchars($row['color']) . '</td>';
+        echo '<td class="py-3 text-center">' . htmlspecialchars($row['date']) . '</td>';
+        echo '<td class="py-3 text-center">' . number_format(floatval($row['price']), 0, '.', ',') . ',000 تومان</td>';
+        echo '<td class="py-3 text-center">';
+        
+        echo '<div class="flex items-center gap-2">';
 
-                                    // اگر محدودیت وجود دارد و رکوردهای بیشتری موجود است
-                                    if (!isset($_GET['show_all'])) {
-                                        $count_sql = isset($_GET['search']) ?
-                                            "SELECT COUNT(*) as total FROM products WHERE name LIKE '%$searchTerm%' OR price LIKE '%$searchTerm%' OR size LIKE '%$searchTerm%' OR date LIKE '%$searchTerm%' OR color LIKE '%$searchTerm%'" :
-                                            "SELECT COUNT(*) as total FROM products";
+        // دکمه حذف
+        echo '<a href="delete_product.php?id=' . $row['id'] . '" class="text-red-500 hover:text-red-700 transition duration-200" title="حذف">';
+        echo '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EF4444"><path fill="none" stroke="#EF4444" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 5v6m4-6v6"/></svg>';
+        echo '</a>';
+        
+        // دکمه نمایش فاکتور
+        echo '<button onclick="showInvoice(\'' . htmlspecialchars($row['name']) . '\', \'' . htmlspecialchars($row['size']) . '\', \'' . htmlspecialchars($row['color']) . '\', \'' . htmlspecialchars($row['date']) . '\', \'' . number_format(floatval($row['price']), 0, '.', ',') . '\', \'' . $row['id'] . '\')" class="text-blue-500 hover:text-blue-700 transition duration-200" title="نمایش فاکتور">';
+        echo '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#2563EB"><g fill="none" stroke="#2563EB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></g></svg>';
+        echo '</button>';
+        
+        echo '</div>';
+        
 
-                                        $count_result = $conn->query($count_sql);
-                                        $total_count = $count_result->fetch_assoc()['total'];
+        echo '</td>';
+        echo '</tr>';
+    }
 
-                                        if ($total_count > 5) {
-                                            echo '<tr id="show-more-row">';
-                                            echo '<td colspan="6" class="py-4 text-center">';
-                                            $query_params = $_GET;
-                                            $query_params['show_all'] = '1';
-                                            echo '<a href="?' . htmlspecialchars(http_build_query($query_params)) . '" class="inline-block px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200">';
-                                            echo 'مشاهده همه محصولات';
-                                            echo '</a>';
-                                            echo '</td>';
-                                            echo '</tr>';
-                                        }
-                                    }
-                                } else {
-                                    echo '<tr><td colspan="6" class="py-4 text-center text-gray-500">محصولی یافت نشد</td></tr>';
-                                }
+    // اگر محدودیت وجود دارد و رکوردهای بیشتری موجود است
+    if (!isset($_GET['show_all'])) {
+        $count_sql = isset($_GET['search']) ?
+            "SELECT COUNT(*) as total FROM products WHERE name LIKE '%$searchTerm%' OR price LIKE '%$searchTerm%' OR size LIKE '%$searchTerm%' OR date LIKE '%$searchTerm%' OR color LIKE '%$searchTerm%'" :
+            "SELECT COUNT(*) as total FROM products";
 
-                                $conn->close();
-                                ?>
+        $count_result = $conn->query($count_sql);
+        $total_count = $count_result->fetch_assoc()['total'];
+
+        if ($total_count > 5) {
+            echo '<tr id="show-more-row">';
+            echo '<td colspan="6" class="py-4 text-center">';
+            $query_params = $_GET;
+            $query_params['show_all'] = '1';
+            echo '<a href="?' . htmlspecialchars(http_build_query($query_params)) . '" class="inline-block px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200">';
+            echo 'مشاهده همه محصولات';
+            echo '</a>';
+            echo '</td>';
+            echo '</tr>';
+        }
+    }
+} else {
+    echo '<tr><td colspan="6" class="py-4 text-center text-gray-500">محصولی یافت نشد</td></tr>';
+}
+
+$conn->close();
+?>
+
                             </tbody>
                         </table>
                     </div>
@@ -689,6 +751,110 @@
             </main>
         </div>
     </div>
+
+
+
+<!-- کد های پاپ آپ برای پرینت -->
+
+<!-- Modal -->
+<div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 ">
+  <div class="bg-white w-11/12 md:w-2/3 lg:w-1/2 rounded-2xl shadow-xl p-6 relative">
+    
+    <!-- دکمه بستن -->
+    <button onclick="closeInvoice()" 
+            class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+    
+    <div id="invoiceContent" class="text-gray-800">
+      <!-- محتوای فاکتور اینجا با جاوااسکریپت پر میشه -->
+    </div>
+
+    <!-- دکمه پرینت -->
+    <div class="text-center mt-6">
+      <button onclick="printInvoice()" 
+              class="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
+        پرینت فاکتور
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function showInvoice(name, size, color, date, price , id) {
+    const invoiceHTML = `
+<div class="border border-gray-400 p-4 rounded-xl w-96 mx-auto">
+        <!-- هدر فروشگاه -->
+        <div class="text-center mb-4">
+          <h2 class="text-xl font-bold">فروشگاه هادی</h2>
+          <p class="text-sm text-gray-600">بورس کت شلوار و کت دامن</p>
+        </div>
+
+        <!-- اطلاعات فاکتور -->
+        <div class="flex justify-between text-sm mb-4">
+          <p><strong>شماره فاکتور:</strong> ${id}</p>
+          <p><strong>تاریخ و ساعت:</strong> ${date}</p>
+        </div>
+
+        <!-- جدول محصولات -->
+        <table class="w-full border text-sm text-center mb-4">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="border px-2 py-1">نام کالا</th>
+              <th class="border px-2 py-1">سایز</th>
+              <th class="border px-2 py-1">رنگ</th>
+              <th class="border px-2 py-1">تعداد</th>
+              <th class="border px-2 py-1">قیمت واحد</th>
+              <th class="border px-2 py-1">مبلغ کل</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border px-2 py-1">${name}</td>
+              <td class="border px-2 py-1">${size}</td>
+              <td class="border px-2 py-1">${color}</td>
+              <td class="border px-2 py-1">1</td>
+              <td class="border px-2 py-1">${price},000</td>
+              <td class="border px-2 py-1">${price},000</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- بخش جمع کل -->
+        <div class="border p-3 mb-4">
+          <p><strong>مبلغ فاکتور:</strong> ${price},000 ریال</p>
+          <p><strong>جمع کل:</strong> ${price},000 تومان</p>
+        </div>
+
+        <!-- اطلاعات تماس -->
+        <div class="text-center text-sm">
+          <p>📍 تبریز , بازار , میدان نماز , پاساژ نماز پلاک 3</p>
+          <p>☎️ 041-35236433 | 📱 09911631448</p>
+          <p class="mt-2 text-gray-500">تفاوت قیمت را با ما تجربه کنید</p>
+        </div>
+      </div>
+    `;
+    document.getElementById("invoiceContent").innerHTML = invoiceHTML;
+    document.getElementById("invoiceModal").classList.remove("hidden");
+    document.getElementById("invoiceModal").classList.add("flex");
+}
+
+function closeInvoice() {
+    document.getElementById("invoiceModal").classList.add("hidden");
+    document.getElementById("invoiceModal").classList.remove("flex");
+}
+
+function printInvoice() {
+    const printContents = document.getElementById("invoiceContent").innerHTML;
+    const originalContents = document.body.innerHTML;
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+    location.reload();
+}
+</script>
+
+
+
 
     <script src="scripts.js"></script>
 </body>

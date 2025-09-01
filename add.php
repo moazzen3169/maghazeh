@@ -1,50 +1,48 @@
-
-
 <?php
-    // اتصال به پایگاه داده
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $database = "salam";
-
-    $conn = mysqli_connect($servername, $username, $password, $database);
-
-    // بررسی اتصال
-    if (!$conn) {
-        die("خطا در اتصال به پایگاه داده: " . mysqli_connect_error());
-    }
-
-    // پردازش فرم در صورت ارسال
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // دریافت مقادیر از فرم
-        $name = $_POST["name"];
-        $color = $_POST["color"];
-        $size = $_POST["size"];
-        $date = $_POST["date"];
-        $price = $_POST["price"];
-
-        // استفاده از prepared statement برای جلوگیری از SQL Injection
-        $stmt = $conn->prepare("INSERT INTO products (name, color, size, date, price) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $name, $color, $size, $date,$price);
-
-        // درج اطلاعات در جدول "order"
-        $sql = "INSERT INTO orders (name, color, size,price) VALUES ('$name', '$color', '$size', '$price')";
-        if ($conn->query($sql) === false) {
-            echo "خطا در درج اطلاعات در جدول order: " . $conn->error;
+$conn = new mysqli("localhost", "root", "", "salam");
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-        // اجرای استعلام
-        if ($stmt->execute()) {
+$id = $_POST['id'] ?? null;
+$newName = trim($_POST['new_name'] ?? '');
+$color = $_POST['color'] ?? null;
+$size = $_POST['size'] ?? null;
+$date = $_POST['date'] ?? null;
+$price = $_POST['price'] ?? null;
 
-            header('Location: ' . $_SERVER['HTTP_REFERER']);
-            exit();
+if ($id === 'add_new' && $newName !== '') {
+    // اضافه کردن محصول جدید به جدول product_prices
+    $stmt = $conn->prepare("INSERT INTO product_prices (product_name) VALUES (?)");
+    $stmt->bind_param("s", $newName);
+    $stmt->execute();
+    $productId = $stmt->insert_id; // گرفتن id محصول جدید
+    $productName = $newName;
+    $stmt->close();
+} elseif ($id) {
+    // گرفتن نام محصول از جدول product_prices
+    $stmt = $conn->prepare("SELECT product_name FROM product_prices WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $productName = $result->fetch_assoc()['product_name'] ?? null;
+    $stmt->close();
+}
 
+if (!$productName) {
+    die("محصول نامعتبر است.");
+}
 
-        } else {
-            echo "خطا در ذخیره اطلاعات: " . $stmt->error;
-        }
+// درج در جدول products
+$stmt = $conn->prepare("INSERT INTO products (name, color, size, date, price) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param("ssssi", $productName, $color, $size, $date, $price);
+$stmt->execute();
+$stmt->close();
 
-        // بستن prepared statement
-        $stmt->close();
-    }
-    ?>
+$conn->close();
+
+// بازگشت به صفحه اصلی پس از موفقیت
+header("Location: dashboard.php"); // آدرس صفحه اصلی خودت را اینجا بگذار
+exit();
+
+?>
