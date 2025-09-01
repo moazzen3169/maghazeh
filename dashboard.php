@@ -12,11 +12,11 @@
 
     <style>
         * {
-            font-family: modam;
+            font-family: peyda;
         }
 
         body {
-            font-family: modam;
+            font-family: peyda;
             background-color: var(--color-bg);
         }
 
@@ -341,7 +341,7 @@ renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','
                     $servername = "localhost";
                     $username = "root";
                     $password = "";
-                    $dbname = "test";
+                    $dbname = "salam";
 
                     $conn = new mysqli($servername, $username, $password, $dbname);
                     if ($conn->connect_error) {
@@ -349,7 +349,7 @@ renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','
                     }
 
                     // اجرای پرس و جو برای دریافت داده‌ها
-                    $sql = "SELECT name, price FROM products ORDER BY id ASC";
+                    $sql = "SELECT name, price FROM chart ORDER BY id ASC";
                     $result = $conn->query($sql);
 
                     $labels = [];
@@ -405,7 +405,7 @@ renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','
                                     legend: {
                                         labels: {
                                             font: {
-                                                family: 'modam'
+                                                family: 'peyda'
                                             }
                                         }
                                     }
@@ -414,115 +414,9 @@ renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','
                         });
                     });
                 </script>
-<!-- Add Product Form -->
-<div class="glass-card p-6 rounded-xl mb-6">
-    <h3 class="font-semibold text-gray-800 mb-6 text-lg border-b pb-3">ثبت محصول جدید</h3>
-    <form method="post" action="add.php" class="grid gap-6" id="addProductForm">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
-            <!-- نام محصول -->
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">نام محصول</label>
-                <select name="id" id="productSelect"
-                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-                    <?php
-                    $conn = new mysqli("localhost", "root", "", "salam");
-                    $sql = "SELECT id, product_name FROM product_prices ORDER BY product_name ASC";
-                    $result = $conn->query($sql);
 
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<option value='" . $row["id"] . "'>" . htmlspecialchars($row["product_name"]) . "</option>";
-                        }
-                    } else {
-                        echo "<option disabled>هیچ محصولی یافت نشد</option>";
-                    }
-                    $conn->close();
-                    ?>
-                    <option value="add_new" class="text-blue-600 font-bold">+ افزودن محصول جدید</option>
-                </select>
-                <!-- فیلد نام محصول جدید پنهان -->
-                <input type="text" name="new_name" id="newProductName" placeholder="نام محصول جدید"
-                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 mt-2 hidden">
-            </div>
 
-            <!-- رنگ -->
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">رنگ</label>
-                <select name="color"
-                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-                    <option value="مشکی">مشکی</option>
-                    <option value="سفید">سفید</option>
-                    <option value="قرمز">قرمز</option>
-                    <option value="سبز">سبز</option>
-                    <option value="زرد">زرد</option>
-                    <option value="خردلی">خردلی</option>
-                    <option value="کرمی">کرمی</option>
-                    <option value="قهوه ای">قهوه ای</option>
-                    <option value="صورتی">صورتی</option>
-                    <option value="زرشکی">زرشکی</option>
-                    <option value="توسی">توسی</option>
-                    <option value="گلبهی">گلبهی</option>
-                    <option value="بنفش">بنفش</option>
-                    <option value="آبی">آبی</option>
-                    <option value="تعویضی">تعویضی</option>
-                </select>
-            </div>
 
-            <!-- سایز -->
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">سایز</label>
-                <select name="size"
-                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-                    <option value="36">36</option>
-                    <option value="38">38</option>
-                    <option value="40">40</option>
-                    <option value="42">42</option>
-                    <option value="44">44</option>
-                    <option value="46">46</option>
-                    <option value="48">48</option>
-                    <option value="50">50</option>
-                    <option value="52">52</option>
-                    <option value="54">54</option>
-                    <option value="56">56</option>
-                </select>
-            </div>
-
-            <!-- تاریخ -->
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">تاریخ</label>
-                <input type="text" name="date" id="date-input"
-                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500" />
-            </div>
-
-            <!-- قیمت -->
-            <div class="space-y-2">
-                <label class="block text-sm font-medium text-gray-700">قیمت</label>
-                <input type="text" name="price" placeholder="قیمت"
-                    class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1">
-            <button type="submit"
-                class="w-full md:w-3/3 mx-auto bg-blue-500 hover:bg-blue-600 text-white py-2.5 px-4 rounded-lg transition duration-200 flex items-center justify-center">
-                <i class="fas fa-plus ml-2"></i>
-                <span>ثبت محصول</span>
-            </button>
-        </div>
-    </form>
-</div>
-
-<!-- JS برای نمایش فیلد محصول جدید -->
-<script>
-document.getElementById('productSelect').addEventListener('change', function() {
-    var newNameInput = document.getElementById('newProductName');
-    if (this.value === 'add_new') {
-        newNameInput.classList.remove('hidden');
-    } else {
-        newNameInput.classList.add('hidden');
-    }
-});
-</script>
 
 
 <!-- Modal (پاپ آپ) -->
@@ -534,7 +428,7 @@ document.getElementById('productSelect').addEventListener('change', function() {
                 <label class="block text-sm font-medium text-gray-700">نام محصول</label>
                 <input type="text" name="name" required
                     class="w-full bg-gray-100 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500">
-            </div>
+            </div>  
             <div>
                 <label class="block text-sm font-medium text-gray-700">قیمت خرید (فی)</label>
                 <input type="number" name="unit_price" required
@@ -631,6 +525,7 @@ document.getElementById('productSelect').addEventListener('change', function() {
                                     <th class="pb-2 text-center">رنگ</th>
                                     <th class="pb-2 text-center">تاریخ</th>
                                     <th class="pb-2 text-center">قیمت</th>
+                                    <th class="pb-2 text-center">روش پرداخت</th>
                                     <th class="pb-2 text-center">عملیات</th>
                                 </tr>
                             </thead>
@@ -659,6 +554,7 @@ if ($total_rows > 0) {
         echo '<td class="py-3 text-center">' . htmlspecialchars($row['color']) . '</td>';
         echo '<td class="py-3 text-center">' . htmlspecialchars($row['date']) . '</td>';
         echo '<td class="py-3 text-center">' . number_format(floatval($row['price']), 0, '.', ',') . ',000 تومان</td>';
+        echo '<td class="py-3 text-center">' . htmlspecialchars($row['payment_method']) . '</td>';
         echo '<td class="py-3 text-center">';
         
         echo '<div class="flex items-center gap-2">';
@@ -721,7 +617,7 @@ $conn->close();
 <!-- کد های پاپ آپ برای پرینت -->
 
 <!-- Modal -->
-<div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 ">
+<div id="invoiceModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center  items-center z-50 ">
   <div class="bg-white w-11/12 md:w-2/3 lg:w-1/2 rounded-2xl shadow-xl p-6 relative">
     
     <!-- دکمه بستن -->
@@ -746,7 +642,7 @@ $conn->close();
 <script>
 function showInvoice(name, size, color, date, price , id) {
     const invoiceHTML = `
-<div class="border border-gray-400 p-4 rounded-xl w-96 mx-auto">
+<div class="border border-gray-400 p-4 rounded-xl w-100% mx-auto">
         <!-- هدر فروشگاه -->
         <div class="text-center mb-4">
           <h2 class="text-xl font-bold">فروشگاه هادی</h2>
@@ -756,7 +652,7 @@ function showInvoice(name, size, color, date, price , id) {
         <!-- اطلاعات فاکتور -->
         <div class="flex justify-between text-sm mb-4">
           <p><strong>شماره فاکتور:</strong> ${id}</p>
-          <p><strong>تاریخ و ساعت:</strong> ${date}</p>
+          <p><strong>تاریخ :</strong> ${date}</p>
         </div>
 
         <!-- جدول محصولات -->

@@ -52,7 +52,7 @@ $dataJSON = json_encode($dataFromDatabase);
     }
 
     #myChart{
-    font-family: modam;
+    font-family: peyda;
 }
 
     h1{

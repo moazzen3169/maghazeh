@@ -12,7 +12,7 @@
 
 
         body {
-            font-family: modam;
+            font-family: peyda;
             background-color: var(--color-bg);
         }
 
@@ -410,9 +410,8 @@
                                                 <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                 <input type="hidden" name="redirect"
                                                     value="<?= urlencode($_SERVER['REQUEST_URI']) ?>">
-                                                <button type="submit"
-                                                    class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg transition duration-200">
-                                                    <i class="fas fa-trash-alt"></i>
+                                                <button type="submit">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EF4444"><path fill="none" stroke="#EF4444" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 5v6m4-6v6"/></svg>
                                                 </button>
                                             </form>
                                         </td>

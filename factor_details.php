@@ -55,199 +55,133 @@ $netAmount = $totalNormalAmount - $totalReturnedAmount;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
-            font-family: 'Vazirmatn', 'modam', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
+            font-family: peyda;
+            box-sizing: border-box;
         }
 
         body {
-            color: #334155;
-        }
-
-        h1, h2, h3, h4 {
-            font-weight: 700;
-            line-height: 1.3;
-        }
-
-        @font-face {
-            font-family: 'Vazirmatn';
-            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn-Regular.woff2') format('woff2');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-        
-        body {
-            background-color: #f8fafc;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
         }
 
         .container-65 {
-            width: 80%;
+            width: 100%;
             max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
-        /* Header Styles */
         .header_section {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            color: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2.5rem;
-            overflow: hidden;
-            padding: 2rem;
-            position: relative;
-        }
-        .header_section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(255,255,255,0.05)" d="M0,0 L100,0 L100,100 L0,100 Z"></path></svg>');
-            opacity: 0.5;
+            background: #FEFEFE;
+            color: gray;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            border-radius:10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         /* Table Styles */
         .invoice-table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            background: white;
+            border-collapse: collapse;
+            margin-bottom: 20px;
         }
 
         .invoice-table th, 
         .invoice-table td {
-            padding: 1.25rem;
-            text-align: right;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 1rem;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
         }
 
         .invoice-table th {
-            background-color: #1d4ed8;
+            background-color: #555;
             color: white;
-            font-weight: 600;
-            font-size: 0.95rem;
-            position: sticky;
-            top: 0;
+        }
+
+        .invoice-table tr:nth-child(even) {
+            background-color: #f2f2f2;
         }
 
         .invoice-table tr:hover {
-            background-color: #f8fafc;
+            background-color: #e9e9e9;
         }
 
-        .invoice-table tr:last-child td {
-            border-bottom: none;
+        /* Summary Table */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
         }
 
-        .invoice-table tr:last-child td {
-            border-bottom: none;
+        .summary-table th, 
+        .summary-table td {
+            padding: 12px;
+            text-align: right;
+            border: 1px solid #ddd;
         }
 
-        .invoice-table tr:hover {
-            background-color: #f8fafc;
+        .summary-table th {
+            background-color: #555;
+            color: white;
         }
 
-        /* Summary Cards */
-        .summary-card {
-            border-radius: 16px;
-            background: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            overflow: hidden;
-            border-top: 4px solid;
+        .summary-table tr:last-child {
+            font-weight: bold;
+            background-color: #f2f2f2;
         }
 
-        .summary-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .summary-card:nth-child(1) {
-            border-top-color: #10b981;
-        }
-        .summary-card:nth-child(2) {
-            border-top-color: #ef4444;
-        }
-        .summary-card:nth-child(3) {
-            border-top-color: #3b82f6;
-        }
-
-        .summary-card .icon-container {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 1rem;
-        }
-
-        .summary-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-        @media (max-width: 1024px) {
-            .container-65 {
-                width: 85%;
-            }
-        }
-        @media (max-width: 768px) {
-            .container-65 {
-                width: 95%;
-            }
-        }
-
-        .header_sectiom{
-            border: 1px solid #333;
-
-        }
-
+        /* Action Buttons */
         .action-buttons {
             display: flex;
             justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-            padding: 1rem 0;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         .action-buttons button, 
         .action-buttons a {
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        .action-buttons button:hover, 
-        .action-buttons a:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        #save-as-image {
+            background-color: #4CAF50;
+            color: white;
         }
+
         @media print {
             .no-print, .action-buttons {
                 display: none !important;
             }
         }
 
-        .btns{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        @media (max-width: 768px) {
+            .container-65 {
+                padding: 10px;
+            }
+            
+            .invoice-table th, 
+            .invoice-table td {
+                padding: 8px;
+                font-size: 14px;
+            }
         }
-        #save-as-image{
-            background-color: #1D4ED8;
-        }
+
+        .negative {
+    color: red;
+    font-weight: bold;
+}
+
 
     </style>
 </head>
@@ -255,17 +189,11 @@ $netAmount = $totalNormalAmount - $totalReturnedAmount;
     <div class="container-65 mx-auto px-4 py-8" id="invoice-container">
         <!-- هدر صفحه -->
         <div class="header_section">
-            <div class="relative z-10">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                    <div>
-                        <h1 class="text-3xl md:text-4xl font-bold mb-2">فروشگاه هادی</h1>
-                        <p class="text-blue-100 text-lg md:text-xl">جزئیات فاکتورهای ماه <?= $month ?></p>
-                    </div>
-                    <div id="current-date" class="bg-white bg-opacity-20 backdrop-blur-sm text-white px-6 py-3 rounded-lg text-lg flex items-center gap-2">
-                        <i class="far fa-calendar-alt"></i>
-                        <span>در حال بارگذاری تاریخ...</span>
-                    </div>
-                </div>
+            <h1>فروشگاه هادی</h1>
+            <p>جزئیات فاکتورهای ماه <?= $month ?></p>
+            <div id="current-date">
+                <i class="far fa-calendar-alt"></i>
+                <span>در حال بارگذاری تاریخ...</span>
             </div>
         </div>
 
@@ -309,88 +237,57 @@ $netAmount = $totalNormalAmount - $totalReturnedAmount;
             </table>
         </div>
 
-        <!-- جمع‌بندی فاکتورها -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- محصولات عادی -->
-            <div class="summary-card">
-                <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="p-3 rounded-full bg-green-100 text-green-600 mr-3">
-                            <i class="fas fa-shopping-cart text-lg"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-800">محصولات خریداری شده</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-gray-600">تعداد کل:</span>
-                            <span class="font-medium text-lg"><?= $totalNormalProducts ?> عدد</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-gray-600">جمع مبلغ:</span>
-                            <span class="font-medium text-green-600 text-lg"><?= number_format($totalNormalAmount, 0) ?> تومان</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- محصولات مرجوعی -->
-            <div class="summary-card">
-                <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="p-3 rounded-full bg-red-100 text-red-600 mr-3">
-                            <i class="fas fa-undo text-lg"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-800">محصولات مرجوعی</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-gray-600">تعداد کل:</span>
-                            <span class="font-medium text-lg"><?= $totalReturnedProducts ?> عدد</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-gray-600">جمع مبلغ:</span>
-                            <span class="font-medium text-red-600 text-lg"><?= number_format($totalReturnedAmount, 0) ?> تومان</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- جمع کل -->
-            <div class="summary-card">
-                <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-3">
-                            <i class="fas fa-chart-line text-lg"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-800">جمع‌بندی نهایی</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                            <span class="text-gray-600">تعداد کل ردیف ها:</span>
-                            <span class="font-medium text-lg"><?= count($invoices) ?> مورد</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-gray-600">خالص فروش:</span>
-                            <span class="font-medium text-blue-600 text-lg"><?= number_format($netAmount, 0) ?> تومان</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- جدول جمع‌بندی -->
+        <table class="summary-table">
+    <thead>
+        <tr>
+            <th>نوع</th>
+            <th>تعداد کل</th>
+            <th>جمع مبلغ</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>محصولات خریداری شده</td>
+            <td><?= $totalNormalProducts ?> عدد</td>
+            <td class="<?= $totalNormalAmount < 0 ? 'negative' : '' ?>">
+                <?= number_format($totalNormalAmount, 0) ?> تومان
+            </td>
+        </tr>
+        <tr>
+            <td>محصولات مرجوعی</td>
+            <td class="<?= $totalReturnedProducts < 0 ? 'negative' : '' ?>">
+                <?= $totalReturnedProducts ?> عدد
+            </td>
+            <td class="<?= $totalReturnedAmount < 0 ? 'negative' : '' ?>">
+                <?= number_format($totalReturnedAmount, 0) ?> تومان
+            </td>
+        </tr>
+        <tr class="total-row">
+            <td>جمع نهایی</td>
+            <td class="<?= count($invoices) < 0 ? 'negative' : '' ?>">
+                <?= count($invoices) ?> مورد
+            </td>
+            <td class="<?= $netAmount < 0 ? 'negative' : '' ?>">
+                <?= number_format($netAmount, 0) ?> تومان
+            </td>
+        </tr>
+    </tbody>
+</table>
 
             
         <!-- دکمه‌های اقدام -->
-        <div class="flex justify-center md:justify-end gap-4 mb-8 print:hidden">
-            <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg transition-all duration-200 flex items-center shadow-md hover:shadow-lg">
-                <i class="fas fa-print ml-2"></i>
+        <div class="action-buttons">
+            <button onclick="window.print()">
+                <i class="fas fa-print"></i>
                 چاپ فاکتور
             </button>
-            <button id="save-as-image" class="bg-emerald-600 hover:bg-emerald-700 text-white py-3 px-6 rounded-lg transition-all duration-200 flex items-center shadow-md hover:shadow-lg">
-                <i class="fas fa-camera ml-2"></i>
+            <button id="save-as-image">
+                <i class="fas fa-camera"></i>
                 ذخیره به عنوان عکس
             </button>
-            <a href="factor.php" class="bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-lg transition-all duration-200 flex items-center shadow-md hover:shadow-lg">
-                <i class="fas fa-arrow-left ml-2"></i>
+            <a href="factor.php">
+                <i class="fas fa-arrow-left"></i>
                 بازگشت
             </a>
         </div>

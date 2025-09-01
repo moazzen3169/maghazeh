@@ -4,13 +4,16 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// دریافت داده‌های فرم
 $id = $_POST['id'] ?? null;
 $newName = trim($_POST['new_name'] ?? '');
 $color = $_POST['color'] ?? null;
 $size = $_POST['size'] ?? null;
 $date = $_POST['date'] ?? null;
 $price = $_POST['price'] ?? null;
+$payment_method = $_POST['payment_method'] ?? 'pos'; // مقدار پیش‌فرض در صورت خالی بودن
 
+// بررسی محصول جدید یا موجود
 if ($id === 'add_new' && $newName !== '') {
     // اضافه کردن محصول جدید به جدول product_prices
     $stmt = $conn->prepare("INSERT INTO product_prices (product_name) VALUES (?)");
@@ -33,9 +36,9 @@ if (!$productName) {
     die("محصول نامعتبر است.");
 }
 
-// درج در جدول products
-$stmt = $conn->prepare("INSERT INTO products (name, color, size, date, price) VALUES (?, ?, ?, ?, ?)");
-$stmt->bind_param("ssssi", $productName, $color, $size, $date, $price);
+// درج در جدول products همراه با فیلد payment_method
+$stmt = $conn->prepare("INSERT INTO products (name, color, size, date, price, payment_method) VALUES (?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("ssssss", $productName, $color, $size, $date, $price, $payment_method);
 $stmt->execute();
 $stmt->close();
 
@@ -44,5 +47,4 @@ $conn->close();
 // بازگشت به صفحه اصلی پس از موفقیت
 header("Location: dashboard.php"); // آدرس صفحه اصلی خودت را اینجا بگذار
 exit();
-
 ?>

@@ -31,7 +31,7 @@
         }
 
         body {
-            font-family: modam;
+            font-family: peyda;
             background-color: var(--color-bg);
         }
 
