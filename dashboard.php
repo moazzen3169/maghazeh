@@ -75,8 +75,7 @@
             <main class="p-6">
                 <!-- Stats Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
-                    <!-- Daily Revenue -->
-                    <?php
+<?php
 // تابع ساده برای گرفتن سال و ماه شمسی جاری
 function getCurrentJalaliYearMonth() {
     $tz = new DateTimeZone('Asia/Tehran');
@@ -130,7 +129,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// داده‌ها
+// --- داده‌ها ---
 // فروش روزانه
 $sqlDailySales = "SELECT COUNT(*) as total FROM products WHERE DATE(date_added) = CURRENT_DATE()";
 $dailySales = $conn->query($sqlDailySales)->fetch_assoc()["total"] ?? 0;
@@ -151,115 +150,80 @@ $monthlyRevenue = $conn->query($sqlMonthlyRevenue)->fetch_assoc()["total_price"]
 $sqlAnnualSales = "SELECT COUNT(*) as total FROM products WHERE date LIKE '$yearLike'";
 $annualSales = $conn->query($sqlAnnualSales)->fetch_assoc()["total"] ?? 0;
 
+// --- محاسبه تغییرات نسبت به دوره قبل ---
+// فروش روز گذشته
+$sqlYesterdaySales = "SELECT COUNT(*) as total FROM products WHERE DATE(date_added) = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)";
+$yesterdaySales = $conn->query($sqlYesterdaySales)->fetch_assoc()["total"] ?? 0;
+$dailySalesChange = $yesterdaySales > 0 ? (($dailySales - $yesterdaySales) / $yesterdaySales) * 100 : 0;
+
+// درآمد روز گذشته
+$sqlYesterdayRevenue = "SELECT SUM(price) as total_price FROM products WHERE DATE(date_added) = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)";
+$yesterdayRevenue = $conn->query($sqlYesterdayRevenue)->fetch_assoc()["total_price"] ?? 0;
+$dailyRevenueChange = $yesterdayRevenue > 0 ? (($dailyRevenue - $yesterdayRevenue) / $yesterdayRevenue) * 100 : 0;
+
+// فروش ماه قبل
+$previousMonth = $currentMonth - 1;
+$previousYear = $currentYear;
+if ($previousMonth == 0) {
+    $previousMonth = 12;
+    $previousYear -= 1;
+}
+$previousMonthLike = "$previousYear/$previousMonth/%";
+$sqlPreviousMonthSales = "SELECT COUNT(*) as total FROM products WHERE date LIKE '$previousMonthLike'";
+$previousMonthSales = $conn->query($sqlPreviousMonthSales)->fetch_assoc()["total"] ?? 0;
+$monthlySalesChange = $previousMonthSales > 0 ? (($monthlySales - $previousMonthSales) / $previousMonthSales) * 100 : 0;
+
+// درآمد ماه قبل
+$sqlPreviousMonthRevenue = "SELECT SUM(price) as total_price FROM products WHERE date LIKE '$previousMonthLike'";
+$previousMonthRevenue = $conn->query($sqlPreviousMonthRevenue)->fetch_assoc()["total_price"] ?? 0;
+$monthlyRevenueChange = $previousMonthRevenue > 0 ? (($monthlyRevenue - $previousMonthRevenue) / $previousMonthRevenue) * 100 : 0;
+
+// فروش سال قبل
+$sqlPreviousYearSales = "SELECT COUNT(*) as total FROM products WHERE date LIKE '".($currentYear-1)."%' ";
+$previousYearSales = $conn->query($sqlPreviousYearSales)->fetch_assoc()["total"] ?? 0;
+$annualSalesChange = $previousYearSales > 0 ? (($annualSales - $previousYearSales) / $previousYearSales) * 100 : 0;
+
 $conn->close();
 ?>
 
-<!-- Daily Sales -->
-<div class="glass-card p-6 rounded-xl">
-    <div class="flex justify-between items-start">
-        <div>
-            <p class="text-gray-500">فروش روزانه</p>
-            <h3 class="text-2xl font-bold mt-2"><?= $dailySales ?></h3>
-            <p class="text-sm text-green-500 mt-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M5 10l7-7 7 7M5 20h14"/>
+<!-- کارت‌ها -->
+<?php
+function renderCard($title, $value, $change, $iconColor, $bgColor, $unit = '', $suffix = '') {
+    $colorClass = $change >= 0 ? 'text-green-500' : 'text-red-500';
+    $changeText = number_format($change, 1)."%";
+    echo "
+    <div class='glass-card p-6 rounded-xl'>
+        <div class='flex justify-between items-start'>
+            <div>
+                <p class='text-gray-500'>{$title}</p>
+                <h3 class='text-2xl font-bold mt-2'>{$value}{$unit}{$suffix}</h3>
+                <p class='text-sm {$colorClass} mt-2 flex items-center'>
+                    <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 ml-1' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                        <path d='M5 10l7-7 7 7M5 20h14'/>
+                    </svg>
+                    <span>{$changeText} نسبت به دوره قبل</span>
+                </p>
+            </div>
+            <div class='bg-{$bgColor} p-3 rounded-lg'>
+                <svg xmlns='http://www.w3.org/2000/svg' class='w-6 h-6 text-{$iconColor}' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                    <path d='M12 8c-2.28 0-4 1.72-4 4s1.72 4 4 4 4-1.72 4-4-1.72-4-4-4z'/>
+                    <path d='M12 2v2m0 16v2m10-10h-2M4 12H2m15.54 7.54l-1.41-1.41M6.87 6.87 5.46 5.46m12.73 0-1.41 1.41M6.87 17.13l-1.41 1.41'/>
                 </svg>
-                <span>3.8% نسبت به دیروز</span>
-            </p>
-        </div>
-        <div class="bg-orange-100 p-3 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
+            </div>
         </div>
     </div>
-</div>
+    ";
+}
 
-<!-- Monthly Sales -->
-<div class="glass-card p-6 rounded-xl">
-    <div class="flex justify-between items-start">
-        <div>
-            <p class="text-gray-500">فروش ماهانه</p>
-            <h3 class="text-2xl font-bold mt-2"><?= $monthlySales ?></h3>
-            <p class="text-sm text-green-500 mt-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M5 10l7-7 7 7M5 20h14"/>
-                </svg>
-                <span>5.2% نسبت به ماه قبل</span>
-            </p>
-        </div>
-        <div class="bg-blue-100 p-3 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M3 7h18M3 12h18M3 17h18"/>
-            </svg>
-        </div>
-    </div>
-</div>
+// رندر کارت‌ها
+renderCard("فروش روزانه", $dailySales, $dailySalesChange, "orange-500", "orange-100");
+renderCard("فروش ماهانه", $monthlySales, $monthlySalesChange, "blue-500", "blue-100");
+renderCard("فروش سالانه ({$currentYear})", $annualSales, $annualSalesChange, "red-500", "red-100");
+renderCard("درآمد روزانه", number_format($dailyRevenue, 0, '.', ','), $dailyRevenueChange, "yellow-500", "yellow-100", ",000");
+renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','), $monthlyRevenueChange, "green-500", "green-100", ",000");
+?>
 
-<!-- Annual Sales -->
-<div class="glass-card p-6 rounded-xl">
-    <div class="flex justify-between items-start">
-        <div>
-            <p class="text-gray-500">فروش سالانه (<?= $currentYear ?>)</p>
-            <h3 class="text-2xl font-bold mt-2"><?= $annualSales ?></h3>
-            <p class="text-sm text-green-500 mt-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M5 10l7-7 7 7M5 20h14"/>
-                </svg>
-                <span>15.3% نسبت به سال قبل</span>
-            </p>
-        </div>
-        <div class="bg-red-100 p-3 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-        </div>
-    </div>
-</div>
 
-<!-- Daily Revenue -->
-<div class="glass-card p-6 rounded-xl">
-    <div class="flex justify-between items-start">
-        <div>
-            <p class="text-gray-500">درآمد روزانه</p>
-            <h3 class="text-2xl font-bold mt-2"><?= number_format($dailyRevenue, 0, '.', ',') ?>,000</h3>
-            <p class="text-sm text-green-500 mt-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M5 10l7-7 7 7M5 20h14"/>
-                </svg>
-                <span>8.4% نسبت به دیروز</span>
-            </p>
-        </div>
-        <div class="bg-yellow-100 p-3 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M12 8c-2.28 0-4 1.72-4 4s1.72 4 4 4 4-1.72 4-4-1.72-4-4-4z"/>
-                <path d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.54 7.54l-1.41-1.41M6.87 6.87 5.46 5.46m12.73 0-1.41 1.41M6.87 17.13l-1.41 1.41"/>
-            </svg>
-        </div>
-    </div>
-</div>
-
-<!-- Monthly Revenue -->
-<div class="glass-card p-6 rounded-xl">
-    <div class="flex justify-between items-start">
-        <div>
-            <p class="text-gray-500">درآمد ماهانه</p>
-            <h3 class="text-2xl font-bold mt-2"><?= number_format($monthlyRevenue, 0, '.', ',') ?>,000</h3>
-            <p class="text-sm text-green-500 mt-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M5 10l7-7 7 7M5 20h14"/>
-                </svg>
-                <span>12.7% نسبت به ماه قبل</span>
-            </p>
-        </div>
-        <div class="bg-green-100 p-3 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M12 8c-2.28 0-4 1.72-4 4s1.72 4 4 4 4-1.72 4-4-1.72-4-4-4z"/>
-                <path d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.54 7.54l-1.41-1.41M6.87 6.87 5.46 5.46m12.73 0-1.41 1.41M6.87 17.13l-1.41 1.41"/>
-            </svg>
-        </div>
-    </div>
-</div>
 
 
 <!-- Top Products -->
