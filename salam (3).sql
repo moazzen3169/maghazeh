@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Sep 01, 2025 at 04:31 PM
+-- Generation Time: Sep 02, 2025 at 10:37 AM
 -- Server version: 8.2.0
 -- PHP Version: 8.2.13
 
@@ -1086,7 +1086,7 @@ CREATE TABLE IF NOT EXISTS `payments` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `payments`
@@ -1103,7 +1103,12 @@ INSERT INTO `payments` (`id`, `destination`, `amount`, `payment_date`, `reason`,
 (20, 'جواد', 10000000.00, '1404-02-27', 'بدهی مغازه', '2025-06-07 15:12:19', '2025-06-07 15:12:19'),
 (21, 'بهزاد', 10000000.00, '1404-03-03', 'بدهی مغازه', '2025-06-07 15:13:47', '2025-06-07 15:27:21'),
 (22, 'بهزاد', 10000000.00, '1404-03-17', 'بدهی مغازه', '2025-06-07 15:25:17', '2025-06-07 15:25:17'),
-(23, 'بهزاد', 10000000.00, '1404-03-22', 'بدهی مغازه', '2025-06-12 11:26:53', '2025-06-12 11:26:53');
+(23, 'بهزاد', 10000000.00, '1404-03-22', 'بدهی مغازه', '2025-06-12 11:26:53', '2025-06-12 11:26:53'),
+(26, 'بهزاد', 3000000.00, '1404-05-15', 'اجناس تهران', '2025-09-01 20:47:51', '2025-09-01 20:47:51'),
+(27, 'بهزاد', 6000000.00, '1404-05-26', 'اجناس تهران', '2025-09-01 20:48:41', '2025-09-01 20:48:41'),
+(28, 'بهزاد', 5000000.00, '1404-05-31', 'اجناس تهران', '2025-09-01 20:49:18', '2025-09-01 20:49:18'),
+(29, 'بهزاد', 5000000.00, '1404-06-06', 'اجناس تهران', '2025-09-01 20:49:43', '2025-09-01 20:49:43'),
+(31, 'بهزاد', 10000000.00, '1404-06-07', 'بدهی مغازه', '2025-09-01 20:50:55', '2025-09-01 20:50:55');
 
 -- --------------------------------------------------------
 
@@ -1123,7 +1128,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `aPrice` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_persian_ci NOT NULL,
   `date_added` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1110 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_persian_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=1111 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_persian_ci;
 
 --
 -- Dumping data for table `products`
@@ -1655,7 +1660,8 @@ INSERT INTO `products` (`id`, `name`, `color`, `size`, `date`, `price`, `payment
 (1104, 'سرهم', 'کرمی', '44', '1404/6/9', '2900', '', '', '2025-08-31 13:15:03'),
 (1105, 'شراره', 'صورتی', '44', '1404/6/9', '1900', '', '', '2025-08-31 13:57:59'),
 (1106, 'باتری', 'مشکی', '38', '1404/6/10', '2450', 'کارتخوان', '', '2025-09-01 14:33:17'),
-(1107, 'باتری', 'مشکی', '46', '1404/6/10', '2400', 'کارتخوان', '', '2025-09-01 14:33:30');
+(1107, 'باتری', 'مشکی', '46', '1404/6/10', '2400', 'کارتخوان', '', '2025-09-01 14:33:30'),
+(1110, 'کج راه', 'سبز', '40', '1404/6/10', '3000', 'کارتخوان', '', '2025-09-01 17:00:41');
 
 -- --------------------------------------------------------
 
@@ -1670,7 +1676,7 @@ CREATE TABLE IF NOT EXISTS `product_prices` (
   `unit_price` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `product_name` (`product_name`)
-) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `product_prices`
@@ -1700,7 +1706,8 @@ INSERT INTO `product_prices` (`id`, `product_name`, `unit_price`) VALUES
 (21, 'سرهم', 1500),
 (22, 'ژاکات', 1500),
 (23, 'تهران جدید', 2000),
-(24, 'ملینا', 1600);
+(24, 'ملینا', 1600),
+(25, 'کج راه', 1600000);
 
 -- --------------------------------------------------------
 
