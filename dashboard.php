@@ -563,6 +563,13 @@ if ($total_rows > 0) {
         echo '<a href="delete_product.php?id=' . $row['id'] . '" class="text-red-500 hover:text-red-700 transition duration-200" title="حذف">';
         echo '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EF4444"><path fill="none" stroke="#EF4444" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 5v6m4-6v6"/></svg>';
         echo '</a>';
+
+        // دکمه ویرایش
+        echo '<button onclick="editProduct(' . $row['id'] . ')" class="text-green-500 hover:text-green-700 transition duration-200" title="ویرایش">';
+        echo '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#10B981"><g fill="none" stroke="#10B981" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M19.09 14.441v4.44a2.37 2.37 0 0 1-2.369 2.369H5.12a2.37 2.37 0 0 1-2.369-2.383V7.279a2.356 2.356 0 0 1 2.37-2.37H9.56"/><path d="M6.835 15.803v-2.165c.002-.357.144-.7.395-.953l9.532-9.532a1.362 1.362 0 0 1 1.934 0l2.151 2.151a1.36 1.36 0 0 1 0 1.934l-9.532 9.532a1.361 1.361 0 0 1-.953.395H8.197a1.362 1.362 0 0 1-1.362-1.362M19.09 8.995l-4.085-4.086"/></g></svg>';
+        echo '</button>';
+
+
         
         // دکمه نمایش فاکتور
         echo '<button onclick="showInvoice(\'' . htmlspecialchars($row['name']) . '\', \'' . htmlspecialchars($row['size']) . '\', \'' . htmlspecialchars($row['color']) . '\', \'' . htmlspecialchars($row['date']) . '\', \'' . number_format(floatval($row['price']), 0, '.', ',') . '\', \'' . $row['id'] . '\')" class="text-blue-500 hover:text-blue-700 transition duration-200" title="نمایش فاکتور">';
@@ -711,6 +718,84 @@ function printInvoice() {
     location.reload();
 }
 </script>
+
+
+
+
+<!-- مودال مربوط به ویرایش -->
+
+
+
+<!-- فرم ویرایش محصول -->
+<div id="editModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 hidden flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg w-96 shadow-lg">
+        <h2 class="text-xl font-bold mb-4">ویرایش محصول</h2>
+        <form id="editForm" method="POST" action="update_product.php">
+            <input type="hidden" name="id" id="edit_id">
+
+            <div class="mb-3">
+                <label class="block mb-1">نام محصول</label>
+                <input type="text" name="name" id="edit_name" class="w-full border px-3 py-2 rounded">
+            </div>
+
+            <div class="mb-3">
+                <label class="block mb-1">سایز</label>
+                <input type="text" name="size" id="edit_size" class="w-full border px-3 py-2 rounded">
+            </div>
+
+            <div class="mb-3">
+                <label class="block mb-1">رنگ</label>
+                <input type="text" name="color" id="edit_color" class="w-full border px-3 py-2 rounded">
+            </div>
+
+            <div class="mb-3">
+                <label class="block mb-1">تاریخ</label>
+                <input type="text" name="date" id="edit_date" class="w-full border px-3 py-2 rounded">
+            </div>
+
+            <div class="mb-3">
+                <label class="block mb-1">قیمت</label>
+                <input type="text" name="price" id="edit_price" class="w-full border px-3 py-2 rounded">
+            </div>
+
+            <div class="mb-3">
+                <label class="block mb-1">روش پرداخت</label>
+                <input type="text" name="payment_method" id="edit_payment_method" class="w-full border px-3 py-2 rounded">
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-300 rounded">انصراف</button>
+                <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded">ذخیره تغییرات</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+function editProduct(id) {
+    fetch("product_action.php?id=" + id)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("edit_id").value = data.id;
+            document.getElementById("edit_name").value = data.name;
+            document.getElementById("edit_size").value = data.size;
+            document.getElementById("edit_color").value = data.color;
+            document.getElementById("edit_date").value = data.date;
+            document.getElementById("edit_price").value = data.price;
+            document.getElementById("edit_payment_method").value = data.payment_method;
+
+            document.getElementById("editModal").classList.remove("hidden");
+        });
+}
+
+function closeEditModal() {
+    document.getElementById("editModal").classList.add("hidden");
+}
+</script>
+
+
+
 
 
 

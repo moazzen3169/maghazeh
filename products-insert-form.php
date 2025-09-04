@@ -154,7 +154,7 @@
                             <select name="payment_method" required
                                 class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
                                 <option value="کارتخوان">کارتخوان</option>
-                                <option value="card">کارت به کارت</option>
+                                <option value="کارت به کارت">کارت به کارت</option>
                             </select>
                         </div>
                     </div>
