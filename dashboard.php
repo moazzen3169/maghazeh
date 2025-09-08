@@ -559,10 +559,11 @@ if ($total_rows > 0) {
         
         echo '<div class="flex items-center gap-2">';
 
-        // دکمه حذف
-        echo '<a href="delete_product.php?id=' . $row['id'] . '" class="text-red-500 hover:text-red-700 transition duration-200" title="حذف">';
+        // دکمه حذف با مودال تایید
+        echo '<button onclick="confirmDelete(' . $row["id"] . ')" class="text-red-500 hover:text-red-700 transition duration-200" title="حذف">';
         echo '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EF4444"><path fill="none" stroke="#EF4444" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 5v6m4-6v6"/></svg>';
-        echo '</a>';
+        echo '</button>';
+
 
         // دکمه ویرایش
         echo '<button onclick="editProduct(' . $row['id'] . ')" class="text-green-500 hover:text-green-700 transition duration-200" title="ویرایش">';
@@ -795,12 +796,43 @@ function closeEditModal() {
 </script>
 
 
+<!-- Modal تایید حذف محصول -->
+<div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-lg font-bold mb-4">تایید حذف محصول</h2>
+        <p class="mb-4">آیا مطمئن هستید که می‌خواهید این محصول را حذف کنید؟</p>
+        <div class="flex justify-end gap-2">
+            <button onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400">انصراف</button>
+            <a href="#" id="deleteConfirmBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">حذف</a>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(productId) {
+    // نمایش مودال
+    const modal = document.getElementById("deleteModal");
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+
+    // تغییر لینک تایید به لینک حذف محصول
+    const deleteBtn = document.getElementById("deleteConfirmBtn");
+    deleteBtn.href = "delete_product.php?id=" + productId;
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById("deleteModal");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+}
+</script>
 
 
 
 
 
-    <script src="scripts.js"></script>
+
+
 </body>
 
 </html>

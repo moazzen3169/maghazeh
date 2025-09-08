@@ -31,4 +31,9 @@ $pageTitle = $pageTitles[$currentPage] ?? 'داشبورد مدیریت';
             </svg>
         </button>
     </div>
+    <script src="scripts.js"></script>
+
 </header>
+
+
+

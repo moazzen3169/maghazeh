@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تولید فاکتور</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+        *{
+            font-family: peyda;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .invoice-preview {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-12">
+        <h1 class="text-3xl font-bold text-center text-indigo-600 mb-8">تولید فاکتور</h1>
+        
+        <!-- فرم اطلاعات فاکتور -->
+        <div id="invoiceInfoForm" class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">اطلاعات فاکتور</h2>
+            <form id="invoiceForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="invoiceNumber" class="block text-sm font-medium text-gray-700">شماره فاکتور</label>
+                        <input type="text" id="invoiceNumber" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                    </div>
+                    <div>
+                        <label for="invoiceDate" class="block text-sm font-medium text-gray-700">تاریخ</label>
+                        <input type="date" id="invoiceDate" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="sellerName" class="block text-sm font-medium text-gray-700">نام فروشنده</label>
+                        <input type="text" id="sellerName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                    </div>
+                    <div>
+                        <label for="buyerName" class="block text-sm font-medium text-gray-700">نام خریدار</label>
+                        <input type="text" id="buyerName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                    </div>
+                </div>
+                
+                <div class="pt-4">
+                    <button type="submit" class="w-full md:w-auto bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-200 flex items-center justify-center">
+                        <i data-feather="arrow-right" class="ml-2"></i> ادامه به محصولات
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- بخش محصولات (ابتدا مخفی) -->
+        <div id="productsSection" class="hidden max-w-4xl mx-auto">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">افزودن محصولات</h2>
+                <div id="productFormsContainer">
+                    <!-- فرم محصولات به صورت داینامیک اضافه می‌شود -->
+                </div>
+                
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <button id="addProductBtn" class="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-md hover:bg-indigo-200 transition duration-200 flex items-center">
+                        <i data-feather="plus" class="ml-2"></i> افزودن محصول دیگر
+                    </button>
+                    <button id="generateInvoiceBtn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 flex items-center">
+                        <i data-feather="file-text" class="ml-2"></i> تولید فاکتور
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- پیش‌نمایش فاکتور (ابتدا مخفی) -->
+        <div id="invoicePreview" class="hidden max-w-4xl mx-auto invoice-preview bg-white rounded-lg p-8 mb-8">
+            <div class="flex justify-between items-start mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">فاکتور</h2>
+                    <p class="text-gray-600"><span class="font-medium">شماره فاکتور:</span> <span id="previewInvoiceNumber"></span></p>
+                    <p class="text-gray-600"><span class="font-medium">تاریخ:</span> <span id="previewInvoiceDate"></span></p>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-800 font-medium">فروشنده:</p>
+                    <p id="previewSellerName" class="text-gray-600"></p>
+                    <p class="text-gray-800 font-medium mt-2">خریدار:</p>
+                    <p id="previewBuyerName" class="text-gray-600"></p>
+                </div>
+            </div>
+            
+            <div class="border-t border-b border-gray-200 py-4 my-4">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left text-gray-600">
+                            <th class="pb-2">نام محصول</th>
+                            <th class="pb-2 text-right">تعداد</th>
+                            <th class="pb-2 text-right">قیمت واحد</th>
+                            <th class="pb-2 text-right">جمع کل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewProducts">
+                        <!-- سطرهای محصولات به صورت داینامیک اضافه می‌شوند -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="flex justify-end">
+                <div class="w-64">
+                    <div class="flex justify-between py-2">
+                        <span class="font-medium text-gray-700">کل تعداد:</span>
+                        <span id="previewTotalItems" class="font-medium"></span>
+                    </div>
+                    <div class="flex justify-between py-2 border-t border-gray-200">
+                        <span class="font-bold text-gray-800">مبلغ کل:</span>
+                        <span id="previewTotalAmount" class="font-bold text-indigo-600"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-4 border-t border-gray-200 text-center text-gray-500 text-sm">
+                <p>از خرید شما سپاسگزاریم!</p>
+            </div>
+            
+            <div class="mt-6">
+                <button id="newInvoiceBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-200">
+                    <i data-feather="plus" class="ml-2"></i> ایجاد فاکتور جدید
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invoiceDate').value = today;
+            
+            document.getElementById('invoiceForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                document.getElementById('invoiceInfoForm').classList.add('hidden');
+                document.getElementById('productsSection').classList.remove('hidden');
+                addProductForm();
+            });
+            
+            document.getElementById('addProductBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                addProductForm();
+            });
+            
+            document.getElementById('generateInvoiceBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                generateInvoice();
+            });
+            
+            document.getElementById('newInvoiceBtn').addEventListener('click', function() {
+                location.reload();
+            });
+            
+            function addProductForm() {
+                const container = document.getElementById('productFormsContainer');
+                const formId = 'productForm_' + Date.now();
+                
+                const formDiv = document.createElement('div');
+                formDiv.className = 'product-form mb-6 p-4 bg-gray-50 rounded-lg fade-in';
+                formDiv.id = formId;
+                formDiv.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label for="${formId}_name" class="block text-sm font-medium text-gray-700">نام محصول</label>
+                            <input type="text" id="${formId}_name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                        </div>
+                        <div>
+                            <label for="${formId}_quantity" class="block text-sm font-medium text-gray-700">تعداد</label>
+                            <input type="number" id="${formId}_quantity" min="1" value="1" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                        </div>
+                        <div>
+                            <label for="${formId}_unitPrice" class="block text-sm font-medium text-gray-700">قیمت واحد</label>
+                            <input type="number" id="${formId}_unitPrice" min="0" step="0.01" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+                        </div>
+                        <div>
+                            <label for="${formId}_totalPrice" class="block text-sm font-medium text-gray-700">جمع کل</label>
+                            <input type="text" id="${formId}_totalPrice" readonly class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100 p-2 border">
+                        </div>
+                    </div>
+                    ${container.children.length > 0 ? `
+                    <div class="mt-3 flex justify-end">
+                        <button type="button" onclick="document.getElementById('${formId}').remove()" class="text-red-600 hover:text-red-800 text-sm flex items-center">
+                            <i data-feather="trash-2" class="w-4 h-4 ml-1"></i> حذف
+                        </button>
+                    </div>
+                    ` : ''}
+                `;
+                
+                container.appendChild(formDiv);
+                feather.replace();
+                
+                const quantityInput = document.getElementById(`${formId}_quantity`);
+                const unitPriceInput = document.getElementById(`${formId}_unitPrice`);
+                const totalPriceInput = document.getElementById(`${formId}_totalPrice`);
+                
+                function calculateTotal() {
+                    const quantity = parseFloat(quantityInput.value) || 0;
+                    const unitPrice = parseFloat(unitPriceInput.value) || 0;
+                    const total = quantity * unitPrice;
+                    totalPriceInput.value = total.toFixed(2);
+                }
+                
+                quantityInput.addEventListener('input', calculateTotal);
+                unitPriceInput.addEventListener('input', calculateTotal);
+                
+                formDiv.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            function generateInvoice() {
+                document.getElementById('previewInvoiceNumber').textContent = document.getElementById('invoiceNumber').value;
+                document.getElementById('previewInvoiceDate').textContent = document.getElementById('invoiceDate').value;
+                document.getElementById('previewSellerName').textContent = document.getElementById('sellerName').value;
+                document.getElementById('previewBuyerName').textContent = document.getElementById('buyerName').value;
+                
+                const productForms = document.querySelectorAll('.product-form');
+                const productsTable = document.getElementById('previewProducts');
+                productsTable.innerHTML = '';
+                
+                let totalItems = 0;
+                let totalAmount = 0;
+                
+                productForms.forEach(form => {
+                    const name = document.getElementById(`${form.id}_name`).value;
+                    const quantity = parseFloat(document.getElementById(`${form.id}_quantity`).value) || 0;
+                    const unitPrice = parseFloat(document.getElementById(`${form.id}_unitPrice`).value) || 0;
+                    const total = quantity * unitPrice;
+                    
+                    totalItems += quantity;
+                    totalAmount += total;
+                    
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-100';
+                    row.innerHTML = `
+                        <td class="py-3">${name}</td>
+                        <td class="py-3 text-right">${quantity}</td>
+                        <td class="py-3 text-right">$${unitPrice.toFixed(2)}</td>
+                        <td class="py-3 text-right">$${total.toFixed(2)}</td>
+                    `;
+                    productsTable.appendChild(row);
+                });
+                
+                document.getElementById('previewTotalItems').textContent = totalItems;
+                document.getElementById('previewTotalAmount').textContent = `$${totalAmount.toFixed(2)}`;
+                
+                document.getElementById('productsSection').classList.add('hidden');
+                document.getElementById('invoicePreview').classList.remove('hidden');
+                document.getElementById('invoicePreview').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
