@@ -1109,10 +1109,75 @@ h1 {
       if(savedTheme === "dark") document.body.dataset.theme = "dark";
     }
 
+
+
+    function generatePrintTables() {
+  const container = document.getElementById("printHeader");
+  container.innerHTML = `
+    <h2>شرکت XYZ</h2>
+    <p>صورت جلسه موجودی ناموجود - <span id="printDate">${jalaliToday()}</span></p>
+    <p>امضا مسئول انبار: ..................................</p>
+  `;
+
+  if (state.items.length === 0) {
+    container.innerHTML += `<p style="color:red; text-align:center;">⚠️ محصولی برای چاپ وجود ندارد</p>`;
+    return;
+  }
+
+  // ایجاد جدول اصلی یک‌بار
+  const table = document.createElement("table");
+  Object.assign(table.style, {
+    width: "100%", border: "1px solid black",
+    borderCollapse: "collapse", marginTop: "20px"
+  });
+
+  state.items.forEach(item => {
+    item.colors.forEach((color, idx) => {
+      const tr = document.createElement("tr");
+
+      // ستون سایزها (با ویرگول)
+      const sizesTd = document.createElement("td");
+      sizesTd.style.border = "1px solid black";
+      sizesTd.style.padding = "8px";
+      sizesTd.textContent = item.sizesByColor[color].join("، ");
+      tr.appendChild(sizesTd);
+
+      // ستون رنگ
+      const colorTd = document.createElement("td");
+      colorTd.style.border = "1px solid black";
+      colorTd.style.padding = "8px";
+      colorTd.textContent = color;
+      tr.appendChild(colorTd);
+
+      // ستون محصول (فقط در اولین ردیف آن محصول)
+      if (idx === 0) {
+        const productTd = document.createElement("td");
+        productTd.style.border = "1px solid black";
+        productTd.style.padding = "8px";
+        productTd.textContent = item.productName;
+        productTd.rowSpan = item.colors.length;
+        tr.appendChild(productTd);
+      }
+
+      table.appendChild(tr);
+    });
+  });
+
+  container.appendChild(table);
+}
+
+// دکمه چاپ
+document.getElementById("printBtn").addEventListener("click", () => {
+  generatePrintTables();
+  window.print();
+});
+
     // Initialize
     loadState();
     renderInvoice();
     createForm();
+
+
   </script>
 </body>
 </html>
