@@ -1,0 +1,2 @@
+- [x] Update PHP query to fetch product names from product_prices table
+- [x] Change HTML input with datalist to select dropdown with options

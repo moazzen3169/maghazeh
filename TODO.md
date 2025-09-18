@@ -1,0 +1,1 @@
+- [x] Edit products-insert-form.php to limit color select to 10 main colors (remove توسی, گلبهی, بنفش, آبی, تعویضی)
