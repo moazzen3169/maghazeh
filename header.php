@@ -3,7 +3,8 @@ $pageTitles = [
     'dashboard.php' => 'داشبورد ',
     'products.php' => 'مدیریت محصولات',
     'factor.php' => 'فاکتور ها',
-    'pay.php' => ' پرداخت‌ها'
+    'pay.php' => ' پرداخت‌ها',
+    'count_all_products.php' => 'مدیریت محصولات موجود'
 ];
 
 $currentPage = basename($_SERVER['PHP_SELF']);
