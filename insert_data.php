@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "test";
+$dbname = "salam";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $month = $_POST["month"];
     $price = $_POST["price"];
 
-    $stmt = $conn->prepare("INSERT INTO products (name, price) VALUES (?, ?)");
+    $stmt = $conn->prepare("INSERT INTO chart (name, price) VALUES (?, ?)");
     $stmt->bind_param("si", $month, $price);
 
     if ($stmt->execute()) {
