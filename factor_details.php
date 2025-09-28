@@ -42,6 +42,21 @@ foreach ($invoices as $invoice) {
 }
 
 $netAmount = $totalNormalAmount - $totalReturnedAmount;
+
+// Normalize the month format to two digits
+$normalizedMonthNum = str_pad($monthNum, 2, '0', STR_PAD_LEFT);
+
+// Correct the date format for the payment query
+$paymentStmt = $pdo->prepare("
+    SELECT SUM(amount) as total_payments 
+    FROM payments 
+    WHERE payment_date LIKE :month_pattern
+");
+$paymentStmt->execute([':month_pattern' => "$year-$normalizedMonthNum-%"]); // Ensure the format matches the database
+$totalPayments = $paymentStmt->fetchColumn() ?: 0;
+
+// Adjust net amount by subtracting total payments
+$adjustedNetAmount = $netAmount - $totalPayments;
 ?>
 
 <!DOCTYPE html>
@@ -257,13 +272,20 @@ $netAmount = $totalNormalAmount - $totalReturnedAmount;
                 <?= number_format($totalReturnedAmount, 0) ?> تومان
             </td>
         </tr>
+        <tr>
+            <td>پرداختی‌های ماهانه</td>
+            <td>-</td>
+            <td class="<?= $totalPayments < 0 ? 'negative' : '' ?>">
+                <?= number_format($totalPayments, 0) ?> تومان
+            </td>
+        </tr>
         <tr class="total-row">
-            <td>جمع نهایی</td>
+            <td>جمع نهایی تعدیل‌شده</td>
             <td class="<?= count($invoices) < 0 ? 'negative' : '' ?>">
                 <?= count($invoices) ?> مورد
             </td>
-            <td class="<?= $netAmount < 0 ? 'negative' : '' ?>">
-                <?= number_format($netAmount, 0) ?> تومان
+            <td class="<?= $adjustedNetAmount < 0 ? 'negative' : '' ?>">
+                <?= number_format($adjustedNetAmount, 0) ?> تومان
             </td>
         </tr>
     </tbody>
