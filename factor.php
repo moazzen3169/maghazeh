@@ -418,6 +418,11 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EF4444"><path fill="none" stroke="#EF4444" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 5v6m4-6v6"/></svg>
                                                 </button>
                                             </form>
+                                            <button class="edit-btn" data-id="<?= $row['id'] ?>" data-name="<?= htmlspecialchars($row['name']) ?>" data-price="<?= $row['price'] ?>" data-stock="<?= $row['stock'] ?>" data-date="<?= htmlspecialchars($row['date']) ?>" data-returned="<?= $row['returned'] ?>">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#3B82F6">
+                                                    <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zm14.85-9.85l1.41-1.41a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.41 1.41 3.75 3.75z"/>
+                                                </svg>
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -431,6 +436,44 @@
                     </div>
                 </div>
             </main>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold mb-4">ویرایش فاکتور</h3>
+            <form id="edit-form" method="post" action="factor_edit.php">
+                <input type="hidden" name="id" id="edit-id">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">نام محصول</label>
+                        <input type="text" name="name" id="edit-name" class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">قیمت واحد</label>
+                        <input type="number" name="price" id="edit-price" class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">تعداد</label>
+                        <input type="number" name="stock" id="edit-stock" class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">تاریخ</label>
+                        <input type="text" name="date" id="edit-date" class="w-full form-input bg-gray-100 border-0 rounded-lg px-4 py-2.5">
+                    </div>
+                    <div>
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="returned" id="edit-returned" class="form-checkbox h-5 w-5 text-blue-600">
+                            <span class="ml-2 text-gray-700">مرجوعی است؟</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-2">
+                    <button type="button" id="close-modal" class="bg-gray-500 text-white px-4 py-2 rounded-lg">لغو</button>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">ذخیره</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -477,6 +520,26 @@
             .catch(error => {
                 console.error('خطا در دریافت تاریخ:', error);
             });
+    </script>
+
+    <script>
+        // Open modal and populate data
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.getElementById('edit-id').value = button.dataset.id;
+                document.getElementById('edit-name').value = button.dataset.name;
+                document.getElementById('edit-price').value = button.dataset.price;
+                document.getElementById('edit-stock').value = button.dataset.stock;
+                document.getElementById('edit-date').value = button.dataset.date;
+                document.getElementById('edit-returned').checked = button.dataset.returned == 1;
+                document.getElementById('edit-modal').classList.remove('hidden');
+            });
+        });
+
+        // Close modal
+        document.getElementById('close-modal').addEventListener('click', () => {
+            document.getElementById('edit-modal').classList.add('hidden');
+        });
     </script>
 </body>
 
