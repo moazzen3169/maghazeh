@@ -7,88 +7,28 @@
     <title>فروشگاه هادی - مدیریت محصولات</title>
     <script src="tailwind.js"></script>
     <link href="css-library.css" rel="stylesheet">
-    <style>
-        :root {
-            --color-bg: #f5f7fa;
-            --color-card-bg: rgba(255, 255, 255, 0.8);
-            --color-hover-bg: rgba(59, 130, 246, 0.1);
-            --color-hover-row: rgba(59, 130, 246, 0.05);
-            --color-even-row: rgba(249, 250, 251, 0.8);
-            --color-shadow: rgba(0, 0, 0, 0.05);
-            --color-input-focus: rgba(59, 130, 246, 0.2);
-            --color-text: #374151;
-        }
-
-        body.dark {
-            --color-bg: #1f2937;
-            --color-card-bg: rgba(30, 41, 59, 0.8);
-            --color-hover-bg: rgba(147, 197, 253, 0.1);
-            --color-hover-row: rgba(147, 197, 253, 0.05);
-            --color-even-row: rgba(31, 41, 55, 0.8);
-            --color-shadow: rgba(0, 0, 0, 0.3);
-            --color-input-focus: rgba(147, 197, 253, 0.2);
-            --color-text: #f3f4f6;
-        }
-
-        body {
-            font-family: peyda;
-            background-color: var(--color-bg);
-        }
-
-        .glass-card {
-            background: var(--color-card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px var(--color-shadow);
-        }
-
-        .sidebar {
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-item:hover {
-            background-color: var(--color-hover-bg);
-        }
-
-        .product-card {
-            transition: all 0.3s ease;
-            background-color: #fff;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        #date-container {
-            margin-left: 30px;
-            color: var(--color-text);
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/theme.css">
 </head>
 
-<body class="bg-gray-50">
-    <div class="flex h-screen overflow-hidden">
+<body>
+    <div class="app-shell">
         <!-- Sidebar -->
         <?php include("sidebar.php");?>
 
 
         <!-- Main Content -->
-        <div class="flex-1 overflow-auto">
-            <!-- Top Navigation -->
+        <div class="app-main-wrapper">
             <?php include("header.php");?>
 
-            
-
             <!-- Products Content -->
-            <main class="p-6">
+            <main class="app-main">
 
 
                 <!-- Products Stats -->
                 <div class="mb-6">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <!-- Total Products -->
-                        <div class="glass-card p-6 rounded-xl">
+                        <div class="glass-card">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">تعداد نوع محصولات</p>
@@ -110,7 +50,7 @@
                         </div>
 
                         <!-- Total Sales -->
-                        <div class="glass-card p-6 rounded-xl">
+                        <div class="glass-card">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">تعداد کل فروش</p>
@@ -132,7 +72,7 @@
                         </div>
 
                         <!-- Total Revenue -->
-                        <div class="glass-card p-6 rounded-xl">
+                        <div class="glass-card">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">درآمد کل</p>
@@ -147,14 +87,14 @@
                                         ?>
                                     </h3>
                                 </div>
-                                <div class="bg-yellow-100 p-3 rounded-lg">
-                                    <i class="fas fa-money-bill-wave text-yellow-500 text-xl"></i>
-                                </div>
+                                <span class="stat-icon accent-gold">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </span>
                             </div>
                         </div>
 
                         <!-- Total Profit -->
-                        <div class="glass-card p-6 rounded-xl">
+                        <div class="glass-card">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-gray-500">سود کل</p>
@@ -177,9 +117,9 @@
                                         ?>
                                     </h3>
                                 </div>
-                                <div class="bg-purple-100 p-3 rounded-lg">
-                                    <i class="fas fa-chart-pie text-purple-500 text-xl"></i>
-                                </div>
+                                <span class="stat-icon accent-rose">
+                                    <i class="fas fa-chart-pie"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -193,8 +133,8 @@
                             <div class="relative">
                                 <input type="text" name="search" placeholder="جستجوی محصول..."
                                     value="<?php echo isset($_GET['search']) ? $_GET['search'] : ''; ?>"
-                                    class="bg-gray-100 border-0 rounded-lg px-4 py-2 pr-10 w-full md:w-64 focus:ring-2 focus:ring-blue-500">
-                                <button type="submit" class="absolute left-3 top-2 text-gray-400">
+                                    class="form-control" style="padding-left: 40px;">
+                                <button type="submit" class="search-button" aria-label="جستجو">
                                     <i class="fas fa-search"></i>
                                 </button>
                             </div>
@@ -310,6 +250,10 @@
                         $conn->close();
                         ?>
                     </div>
+
+            </main>
+        </div>
+    </div>
 
                     <script>
                         // نمایش/پنهان کردن جزئیات با کلیک

@@ -7,122 +7,23 @@
     <title>فروشگاه هادی - مدیریت فاکتورها</title>
     <script src="tailwind.js"></script>
     <link href="css-library.css" rel="stylesheet">
-    <link rel="stylesheet" href="color.css">
-    <style>
+    <link rel="stylesheet" href="assets/css/theme.css">
 
-
-        body {
-            font-family: peyda;
-            background-color: var(--color-bg);
-        }
-
-        .glass-card {
-            background: var(--color-card-bg);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px var(--color-shadow);
-            margin: 20px;
-        }
-
-        .sidebar {
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-item:hover {
-            background-color: var(--color-hover-bg);
-        }
-
-        .product-table tr:nth-child(even) {
-            background-color: var(--color-even-row);
-        }
-
-        .product-table tr:hover {
-            background-color: var(--color-hover-row);
-        }
-
-        .form-input {
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            box-shadow: 0 0 0 3px var(--color-input-focus);
-        }
-
-        #date-container {
-            margin-left: 30px;
-            color: var(--color-text);
-        }
-        
-        .month-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(245,245,245,0.9) 100%);
-            border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .month-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        
-        .month-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #3B82F6 0%, #6366F1 100%);
-        }
-        
-        .month-card.returned-highlight::before {
-            background: linear-gradient(90deg, #EF4444 0%, #F97316 100%);
-        }
-        
-        .stat-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .stat-item:last-child {
-            border-bottom: none;
-        }
-        
-        .stat-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 10px;
-            flex-shrink: 0;
-        }
-
-        .show_factor_btn{
-            background: linear-gradient(90deg, #3B82F6 0%, #2563eb 100%);
-
-        }
-    </style>
 </head>
 
-<body class="bg-gray-50">
-    <div class="flex h-screen overflow-hidden">
+<body>
+    <div class="app-shell">
         <!-- Sidebar -->
         <?php include("sidebar.php");?>
 
 
         <!-- Main Content -->
-        <div class="flex-1 overflow-auto">
-            <!-- Top Navigation -->
+        <div class="app-main-wrapper">
             <?php include("header.php");?>
 
 
             <!-- فرم ثبت فاکتور جدید -->
-            <div class="glass-card p-6 rounded-xl mb-6 mx-4">
+            <div class="glass-card mb-6 mx-4">
                 <h3 class="font-semibold text-gray-800 mb-6 text-lg border-b pb-3">ثبت فاکتور جدید</h3>
                 <form method="post" action="factor_add.php" class="grid gap-6" dir="rtl">
                     <input type="hidden" name="redirect" value="<?= $_SERVER['REQUEST_URI'] ?>">
@@ -175,7 +76,7 @@
                 </form>
             </div>
 <!-- Monthly Reports - Fixed Version -->
-<div class="glass-card p-6 rounded-xl mb-6 mx-4">
+<div class="glass-card mb-6 mx-4">
     <div class="flex justify-between items-center mb-6">
         <h3 class="font-semibold text-gray-800 text-lg">گزارش ماهانه فاکتورها</h3>
         <div class="flex items-center text-sm text-gray-500">
@@ -344,7 +245,7 @@
                 ?>
 
                 <!-- Products List -->
-                <div class="glass-card p-6">
+                <div class="glass-card">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                         <div>
                             <h3 class="font-semibold text-gray-800 text-lg">لیست فاکتورها</h3>

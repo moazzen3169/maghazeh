@@ -7,74 +7,24 @@
     <title>فروشگاه هادی - داشبورد مدیریت</title>
     <script src="tailwind.js"></script>
     <link href="css-library.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="color.css">
-
-    <style>
-        * {
-            font-family: peyda;
-        }
-
-        body {
-            font-family: peyda;
-            background-color: var(--color-bg);
-        }
-
-        .glass-card {
-            background: var(--color-card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px var(--color-shadow);
-        }
-
-        .sidebar {
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-item:hover {
-            background-color: var(--color-hover-bg);
-        }
-
-        .product-table tr:nth-child(even) {
-            background-color: var(--color-even-row);
-        }
-
-        .product-table tr:hover {
-            background-color: var(--color-hover-row);
-        }
-
-        .form-input {
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            box-shadow: 0 0 0 3px var(--color-input-focus);
-        }
-
-        #date-container {
-            margin-left: 30px;
-            color: var(--color-text);
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/theme.css">
 </head>
 
-<body class="bg-gray-50   ">
-    <div class="flex flex-col md:flex-row h-screen overflow-hidden">
+<body>
+    <div class="app-shell">
         <!-- side bar-->
         <?php include("sidebar.php"); ?>
 
 
 
         <!-- Main Content -->
-        <div class="flex-1 overflow-auto relative">
-            <div id="overlay" class="hidden fixed inset-0 z-30 bg-black bg-opacity-50 md:hidden"></div>
-            <!-- Top Navigation -->
+        <div class="app-main-wrapper">
             <?php include("header.php"); ?>
 
             <!-- Dashboard Content -->
-            <main class="p-6">
+            <main class="app-main">
                 <!-- Stats Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
+                <section class="stat-grid">
 <?php
 // تابع ساده برای گرفتن سال و ماه شمسی جاری
 function getCurrentJalaliYearMonth() {
@@ -188,88 +138,107 @@ $conn->close();
 
 <!-- کارت‌ها -->
 <?php
-function renderCard($title, $value, $change, $iconColor, $bgColor, $unit = '', $suffix = '') {
-    $colorClass = $change >= 0 ? 'text-green-500' : 'text-red-500';
-    $changeText = number_format($change, 1)."%";
+function renderCard($title, $value, $change, $accentClass, $suffix = '') {
+    $isPositive = $change >= 0;
+    $deltaClass = $isPositive ? 'positive' : 'negative';
+    $changeText = number_format($change, 1) . "%";
+
     echo "
-    <div class='glass-card p-6 rounded-xl'>
-        <div class='flex justify-between items-start'>
-            <div>
-                <p class='text-gray-500'>{$title}</p>
-                <h3 class='text-2xl font-bold mt-2'>{$value}{$unit}{$suffix}</h3>
-                <p class='text-sm {$colorClass} mt-2 flex items-center'>
-                    <svg xmlns='http://www.w3.org/2000/svg' class='w-4 h-4 ml-1' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                        <path d='M5 10l7-7 7 7M5 20h14'/>
+    <div class='glass-card stat-card'>
+        <div class='flex items-start justify-between gap-4'>
+            <div class='flex flex-col gap-3'>
+                <span class='stat-label'>{$title}</span>
+                <span class='stat-value'>{$value}{$suffix}</span>
+                <span class='stat-delta {$deltaClass}'>
+                    <svg xmlns=\"http://www.w3.org/2000/svg\" width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'>
+                        <polyline points='18 15 12 9 6 15'></polyline>
                     </svg>
-                    <span>{$changeText} نسبت به دوره قبل</span>
-                </p>
+                    {$changeText}
+                </span>
             </div>
-            <div class='bg-{$bgColor} p-3 rounded-lg'>
-                <svg xmlns='http://www.w3.org/2000/svg' class='w-6 h-6 text-{$iconColor}' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-                    <path d='M12 8c-2.28 0-4 1.72-4 4s1.72 4 4 4 4-1.72 4-4-1.72-4-4-4z'/>
-                    <path d='M12 2v2m0 16v2m10-10h-2M4 12H2m15.54 7.54l-1.41-1.41M6.87 6.87 5.46 5.46m12.73 0-1.41 1.41M6.87 17.13l-1.41 1.41'/>
+            <span class='stat-icon {$accentClass}'>
+                <svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.6'>
+                    <path d='M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0-6v2m0 16v2m10-10h-2M4 12H2m17.66 6.66-1.41-1.41M7.75 7.75 6.34 6.34m12.02 0-1.41 1.41M7.75 16.25l-1.41 1.41' />
                 </svg>
-            </div>
+            </span>
         </div>
     </div>
     ";
 }
 
 // رندر کارت‌ها
-renderCard("فروش روزانه", $dailySales, $dailySalesChange, "orange-500", "orange-100");
-renderCard("فروش ماهانه", $monthlySales, $monthlySalesChange, "blue-500", "blue-100");
-renderCard("فروش سالانه ({$currentYear})", $annualSales, $annualSalesChange, "red-500", "red-100");
-renderCard("درآمد روزانه", number_format($dailyRevenue, 0, '.', ','), $dailyRevenueChange, "yellow-500", "yellow-100", ",000");
-renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','), $monthlyRevenueChange, "green-500", "green-100", ",000");
+renderCard("فروش روزانه", number_format($dailySales), $dailySalesChange, "accent-amber", " عدد");
+renderCard("فروش ماهانه", number_format($monthlySales), $monthlySalesChange, "accent-sky", " عدد");
+renderCard("فروش سالانه ({$currentYear})", number_format($annualSales), $annualSalesChange, "accent-rose", " عدد");
+renderCard("درآمد روزانه", number_format($dailyRevenue, 0, '.', ','), $dailyRevenueChange, "accent-gold", " تومان");
+renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','), $monthlyRevenueChange, "accent-emerald", " تومان");
 ?>
 
 
 
 
 <!-- Top Products -->
-<div class="glass-card p-6 rounded-xl">
-    <div class="flex justify-between items-start">
+<section class="glass-card table-card spotlight-card">
+    <div class="table-header spotlight-header">
         <div>
-            <p class="text-gray-500">محصولات پرفروش</p>
-            <h3 class="text-2xl font-bold mt-2">
+            <h3 class="section-title">محصولات پرفروش</h3>
+            <p class="text-muted mt-1">پنج محصول با بیشترین فروش در ماه جاری</p>
+        </div>
+        <span class="stat-icon accent-rose">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="m12 2 2.09 6.26H20l-5.17 3.76 1.97 6.04L12 15.52 7.2 18.06l1.97-6.04L4 8.26h5.91z" />
+            </svg>
+        </span>
+    </div>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>محصول</th>
+                    <th class="text-center">تعداد</th>
+                </tr>
+            </thead>
+            <tbody>
                 <?php
                 $conn = new mysqli("localhost", "root", "", "salam");
-                $sql = "SELECT name FROM products WHERE date LIKE '1404/3/%' GROUP BY name ORDER BY COUNT(*) DESC LIMIT 1";
+                $sql = "SELECT name, COUNT(*) AS count FROM products WHERE date LIKE '1404/6/%' GROUP BY name ORDER BY count DESC LIMIT 5";
                 $result = $conn->query($sql);
-                $row = $result->fetch_assoc();
-                echo $row["name"] ?? "N/A";
+
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo '<tr>';
+                        echo '<td>' . htmlspecialchars($row["name"]) . '</td>';
+                        echo '<td class="text-center">' . number_format($row["count"]) . '</td>';
+                        echo '</tr>';
+                    }
+                } else {
+                    echo '<tr><td colspan="2" class="table-empty-state">داده‌ای برای نمایش وجود ندارد</td></tr>';
+                }
                 $conn->close();
                 ?>
-            </h3>
-            <p class="text-sm text-gray-500 mt-2">پرفروش ترین محصول</p>
-        </div>
-        <div class="bg-purple-100 p-3 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-            </svg>
-        </div>
+            </tbody>
+        </table>
     </div>
-    </div>
-    </div>
+</section>
 
 
                 <!-- Charts and Tables -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
                     <!-- Sales Chart -->
-                    <div class="lg:col-span-2 glass-card p-6 rounded-xl">
-                        <div class="flex flex-col md:flex-row justify-between items-center gap-3 mb-4">
-                            <h3 class="font-semibold text-gray-800">نمودار فروش ماهانه</h3>
+                    <div class="lg:col-span-2 glass-card">
+                        <div class="section-heading">
+                            <div>
+                                <h3>نمودار فروش ماهانه</h3>
+                                <p class="text-muted mt-1">بررسی روند فروش ثبت شده در جدول chart</p>
+                            </div>
 
-                            <div class="flex items-center gap-2">
-                                <!-- انتخاب سال -->
-                                <select
-                                    class="bg-gray-100 border-0 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500">
+                            <div class="flex items-center gap-3">
+                                <select class="form-control" style="width: 140px;">
                                     <option>سال جاری</option>
                                 </select>
 
-                                <!-- فرم افزودن داده -->
                                 <form method="POST" action="insert_data.php" class="flex items-center gap-2">
-                                    <select name="month" class="bg-gray-100 border rounded-lg px-2 py-1 text-sm">
+                                    <select name="month" class="form-control" style="width: 140px;">
                                         <option value="فروردین">فروردین</option>
                                         <option value="اردیبهشت">اردیبهشت</option>
                                         <option value="خرداد">خرداد</option>
@@ -283,10 +252,8 @@ renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','
                                         <option value="بهمن">بهمن</option>
                                         <option value="اسفند">اسفند</option>
                                     </select>
-                                    <input type="number" name="price" placeholder="مبلغ"
-                                        class="bg-gray-100 border rounded-lg px-2 py-1 w-24 text-sm" required />
-                                    <button type="submit"
-                                        class="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600">+</button>
+                                    <input type="number" name="price" placeholder="مبلغ" class="form-control" style="width: 140px;" required />
+                                    <button type="submit" class="btn btn-primary" aria-label="افزودن داده جدید">+</button>
                                 </form>
                             </div>
                         </div>
@@ -298,7 +265,7 @@ renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','
                     </div>
 
                     <!-- Top Products Table -->
-                    <div class="glass-card p-6 rounded-xl">
+                    <div class="glass-card">
                         <h3 class="font-semibold text-gray-800 mb-4">محصولات پرفروش</h3>
                         <div class="overflow-auto">
                             <table class="w-full">
@@ -460,7 +427,7 @@ renderCard("درآمد ماهانه", number_format($monthlyRevenue, 0, '.', ','
 </script>
 
                 <!-- Search and Products Table -->
-                <div class="glass-card p-6 rounded-xl">
+                <div class="glass-card">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                         <div>
                             <h3 class="font-semibold text-gray-800 text-lg">لیست محصولات</h3>
